@@ -30,7 +30,7 @@ const SPACING = 30; // dot grid pitch (px)
 const SIM_SCALE = 10; // water simulation cell size (px)
 const DAMPING = 0.987; // how long ripples live
 const WAKE_STRENGTH = 15; // cursor movement disturbance
-const DROP_STRENGTH = 520; // click disturbance
+const DROP_STRENGTH = 300; // click disturbance
 const AUTO_DROP_EVERY = 9000; // ms
 const DISPLACE = 0.8; // how far dots ride the wave slope
 const MAX_DISPLACE = 14; // px
@@ -192,29 +192,23 @@ export function InteractiveBackground() {
       const { ink, accent } = palette;
       const t = time * 0.0005;
 
-      // Luminous water surface: crests glow warm, troughs shade with ink.
-      // Light mode gets a far gentler wash — full strength looks blotchy on paper.
+      // Luminous water surface: only the crests carry a whisper of warmth.
+      // (No trough shading — filling lows with the foreground color read as
+      // an ugly gray ball; the displaced dots convey the wave shape instead.)
       if (shadeContext && shadeImage) {
         const data = shadeImage.data;
-        const crestCap = palette.isLight ? 54 : 120;
-        const crestGain = palette.isLight ? 0.75 : 1.6;
-        const troughCap = palette.isLight ? 34 : 90;
-        const troughGain = palette.isLight ? 0.45 : 1.1;
+        const crestCap = palette.isLight ? 24 : 28;
+        const crestGain = 0.32;
 
         for (let i = 0; i < bufferA.length; i++) {
           const h = bufferA[i];
           const p = i * 4;
 
-          if (h > 0.4) {
+          if (h > 1) {
             data[p] = accent.r;
             data[p + 1] = accent.g;
             data[p + 2] = accent.b;
             data[p + 3] = Math.min(crestCap, h * crestGain);
-          } else if (h < -0.4) {
-            data[p] = ink.r;
-            data[p + 1] = ink.g;
-            data[p + 2] = ink.b;
-            data[p + 3] = Math.min(troughCap, -h * troughGain);
           } else {
             data[p + 3] = 0;
           }
@@ -249,18 +243,18 @@ export function InteractiveBackground() {
         const x = dot.x + ox + wave * 1.1 * dot.layer;
         const y = dot.y + oy + Math.cos(t * 0.9 + dot.x * 0.008) * 1.1 * dot.layer;
 
-        // Crests glow warm, troughs stay ink; |slope| adds sparkle
-        const crest = Math.max(0, Math.min(1, h * 0.03));
-        const energy = Math.min(1, Math.abs(h) * 0.02 + (Math.abs(gx) + Math.abs(gy)) * 0.009);
+        // Crests warm slightly; |slope| adds a soft shimmer
+        const crest = Math.max(0, Math.min(1, h * 0.018));
+        const energy = Math.min(1, Math.abs(h) * 0.011 + (Math.abs(gx) + Math.abs(gy)) * 0.005);
 
-        const mix = crest * 0.85;
+        const mix = crest * 0.55;
         const r = ink.r + (accent.r - ink.r) * mix;
         const g = ink.g + (accent.g - ink.g) * mix;
         const b = ink.b + (accent.b - ink.b) * mix;
 
         const alpha =
-          0.12 + dot.layer * 0.04 + wave * 0.015 + energy * (palette.isLight ? 0.42 : 0.62);
-        const size = 0.9 + dot.layer * 0.25 + energy * (palette.isLight ? 1.5 : 2.1);
+          0.12 + dot.layer * 0.04 + wave * 0.015 + energy * (palette.isLight ? 0.2 : 0.28);
+        const size = 0.9 + dot.layer * 0.25 + energy * (palette.isLight ? 0.7 : 0.9);
 
         context.fillStyle = `rgba(${r | 0}, ${g | 0}, ${b | 0}, ${alpha})`;
 
