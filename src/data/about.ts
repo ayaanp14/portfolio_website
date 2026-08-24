@@ -1,41 +1,46 @@
 export const aboutData = {
   narrative: [
     "Who am I?",
-    "Creative Developer.",
-    "Problem Solver.",
-    "Full Stack Engineer."
+    "Full-Stack Developer.",
+    "SaaS Product Builder.",
+    "Founder & Educator.",
   ],
   stats: [
-    { label: "Projects Completed", value: 42, suffix: "+" },
-    { label: "Technologies", value: 28, suffix: "+" },
-    { label: "Years Experience", value: 5, suffix: "+" },
-    { label: "GitHub Commits", value: 2400, suffix: "+" },
+    { label: "Years Experience", value: 3, suffix: "+" },
+    { label: "SaaS Products Shipped", value: 2, suffix: "" },
+    { label: "Students Mentored", value: 900, suffix: "+" },
+    { label: "Technologies", value: 20, suffix: "+" },
   ],
   timeline: [
     {
-      year: "2019",
-      title: "The Beginning",
-      description: "Wrote my first lines of code and fell in love with building for the web.",
-    },
-    {
-      year: "2021",
-      title: "Frontend Focus",
-      description: "Mastered React and modern CSS, focusing on user experience and accessibility.",
+      year: "2020",
+      title: "The Foundation",
+      description:
+        "Started B.Tech in Computer Science (Data Science) at LNCT Bhopal after scoring 92% in Class XII.",
     },
     {
       year: "2023",
-      title: "Creative Engineering",
-      description: "Explored WebGL, Three.js, and GSAP to build immersive, award-winning experiences.",
+      title: "Teaching at Scale",
+      description:
+        "Teaching Assistant at Coding Ninjas — taught Java to 600+ students, resolving 50-60 doubts daily.",
+    },
+    {
+      year: "2024",
+      title: "Founder & Faculty",
+      description:
+        "Founded Urban Coding Hub, a certified coding institute serving 300+ students, while completing my degree.",
     },
     {
       year: "2025",
-      title: "Full Stack Architecture",
-      description: "Scaling applications with Next.js, Node.js, and advanced cloud infrastructure.",
+      title: "Product Engineering",
+      description:
+        "Full-Stack Engineer at Walkover on Viasocket — led the plugin module's frontend-to-backend migration.",
     },
     {
-      year: "Present",
-      title: "Current Goals",
-      description: "Pushing the boundaries of what is possible on the web with AI and 3D.",
+      year: "2026",
+      title: "Shipping SaaS",
+      description:
+        "Building TrueHostel and a multi-tenant Chatbot SaaS end-to-end at Codinginfotech, deployed on Azure.",
     },
   ],
 };

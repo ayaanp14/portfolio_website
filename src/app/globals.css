@@ -1,34 +1,93 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #050505;
-  --color-ink-soft: #101114;
-  --color-glass: rgba(255, 255, 255, 0.08);
-  --color-glass-strong: rgba(255, 255, 255, 0.16);
-  --color-glass-white: rgba(255, 255, 255, 0.72);
-  --color-cyan: #54f4ff;
-  --color-blue: #7aa7ff;
-  --color-purple: #8b5cf6;
-  --color-lilac: #c4b5fd;
-  --color-line: rgba(255, 255, 255, 0.14);
+  /* Kinetic Editorial palette — light-first, flipped by [data-theme="dark"] */
+  --color-paper: #f1ede6;
+  --color-elevated: #e7e2d7;
+  --color-ink: #17150f;
+  --color-accent: #ff4d24;
+  --color-violet: #5636f0;
+  --color-line: rgba(23, 21, 15, 0.16);
 
-  --font-sans: Inter, "SF Pro Display", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
-  --font-display: Inter, "SF Pro Display", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
-
-  --shadow-glow-cyan: 0 0 48px rgba(84, 244, 255, 0.18);
-  --shadow-glow-purple: 0 0 56px rgba(139, 92, 246, 0.2);
+  --font-sans: var(--font-inter), Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-grotesk), "Space Grotesk", var(--font-inter), ui-sans-serif, sans-serif;
 }
 
 :root {
-  color-scheme: dark;
-  background: #050505;
+  color-scheme: light;
+  /* The page background lives on html, NOT body — a fixed background layer
+     with negative z-index paints between the two, so body must stay
+     transparent for it to show. */
+  background: var(--color-paper);
+  transition: background-color 0.6s ease;
+  --glow-opacity: 0.09;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+  --glow-opacity: 0.13;
+
+  --color-paper: #11100d;
+  --color-elevated: #1a1814;
+  --color-ink: #f1ede6;
+  --color-accent: #ff5c33;
+  --color-violet: #8f7bff;
+  --color-line: rgba(241, 237, 230, 0.16);
+}
+
 * {
   box-sizing: border-box;
+}
+
+/* Themed scrollbar — modern engines (Chrome 121+, Firefox, Safari 18.2+) */
+:root {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-ink) 38%, var(--color-paper))
+    var(--color-paper);
+}
+
+/* Fallback for older WebKit (ignored by engines using scrollbar-color) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-paper);
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-ink) 38%, var(--color-paper));
+  border-radius: 999px;
+  border: 2px solid var(--color-paper);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--color-paper);
+}
+
+/* The fullscreen menu is the inverted surface — invert its scrollbar too */
+#site-menu {
+  scrollbar-color: color-mix(in srgb, var(--color-paper) 45%, var(--color-ink))
+    var(--color-ink);
+}
+
+#site-menu ::-webkit-scrollbar-track,
+#site-menu::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+
+#site-menu ::-webkit-scrollbar-thumb,
+#site-menu::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-paper) 45%, var(--color-ink));
+  border-color: var(--color-ink);
 }
 
 html {
@@ -36,25 +95,37 @@ html {
   scroll-behavior: auto;
 }
 
+/* Lenis smooth-scroll conventions */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 body {
   min-height: 100%;
   margin: 0;
   overflow-x: clip;
-  background:
-    radial-gradient(circle at 18% 12%, rgba(84, 244, 255, 0.08), transparent 28rem),
-    radial-gradient(circle at 80% 18%, rgba(139, 92, 246, 0.12), transparent 32rem),
-    #050505;
-  color: rgba(255, 255, 255, 0.88);
+  background: transparent;
+  color: var(--color-ink);
   font-family: var(--font-sans);
+  transition: color 0.6s ease;
 }
 
-body.is-loading {
+body.is-locked {
   overflow: hidden;
 }
 
 ::selection {
-  background: rgba(84, 244, 255, 0.28);
-  color: #ffffff;
+  background: var(--color-accent);
+  color: var(--color-paper);
 }
 
 a {
@@ -71,36 +142,107 @@ select {
 
 button {
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
 }
 
-canvas {
+canvas,
+img,
+svg {
   display: block;
+  max-width: 100%;
 }
 
-.noise-overlay {
+/* Film grain over everything — the editorial texture */
+.grain-overlay {
   pointer-events: none;
   position: fixed;
-  inset: 0;
-  z-index: 1;
-  opacity: 0.16;
-  mix-blend-mode: soft-light;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(circle at 50% 35%, black, transparent 72%);
+  inset: -50%;
+  z-index: 80;
+  width: 200%;
+  height: 200%;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.9s steps(4) infinite;
 }
 
-@media (pointer: fine) {
-  body {
-    cursor: none;
-  }
+@keyframes grain-shift {
+  0% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(-2%, 1.4%, 0); }
+  50% { transform: translate3d(1.6%, -1.2%, 0); }
+  75% { transform: translate3d(-1.2%, -1.8%, 0); }
+  100% { transform: translate3d(1.8%, 1.2%, 0); }
+}
 
-  a,
-  button,
-  [role="button"] {
-    cursor: none;
+/* Hollow display type */
+.text-outline {
+  -webkit-text-stroke: 1.5px var(--color-ink);
+  color: transparent;
+  transition: color 0.45s ease, -webkit-text-stroke-color 0.45s ease;
+}
+
+.text-outline-accent {
+  -webkit-text-stroke: 1.5px var(--color-accent);
+  color: transparent;
+}
+
+/* Skill wall rows: outline that floods with accent on hover */
+.wall-row .wall-word {
+  -webkit-text-stroke: 1.2px var(--color-ink);
+  color: transparent;
+  transition: color 0.4s ease, -webkit-text-stroke-color 0.4s ease;
+}
+
+.wall-row:hover .wall-word {
+  -webkit-text-stroke-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Infinite marquees */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration, 30s) linear infinite;
+}
+
+.marquee-track[data-direction="reverse"] {
+  animation-direction: reverse;
+}
+
+.marquee-pause:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translateX(-50%);
   }
+}
+
+/* Link underline sweep */
+.link-sweep {
+  position: relative;
+}
+
+.link-sweep::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.link-sweep:hover::after,
+.link-sweep:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -112,18 +254,25 @@ canvas {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+
+  .marquee-track,
+  .grain-overlay {
+    animation: none;
+  }
+
+  /* Without the pinned horizontal scroll, stack project panels vertically */
+  [data-projects-track] {
+    flex-direction: column !important;
+  }
+
+  [data-projects-track] article {
+    height: auto !important;
+  }
 }
 
 @utility container-page {
-  width: min(100% - 2rem, 1200px);
+  width: min(100% - 3rem, 1280px);
   margin-inline: auto;
-}
-
-@utility glass-panel {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.045));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 24px 80px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(24px) saturate(150%);
 }
 
 @utility text-balance {

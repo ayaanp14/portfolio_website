@@ -1,18 +1,31 @@
-import { AppShell } from "@/components/layout/app-shell";
-import { Navigation } from "@/components/layout/navigation";
-import { HeroSection } from "@/components/sections/hero-section";
-import { AboutSection } from "@/components/sections/about-section";
-import { SkillsSection } from "@/components/sections/skills-section";
+import { SmoothScroll } from "@/components/core/smooth-scroll";
+import { InteractiveBackground } from "@/components/core/interactive-background";
+import { Preloader } from "@/components/core/preloader";
+import { Header } from "@/components/core/header";
+import { CursorDot } from "@/components/core/cursor-dot";
+import { HeroKinetic } from "@/components/home/hero-kinetic";
+import { Manifesto } from "@/components/home/manifesto";
+import { SkillsWall } from "@/components/home/skills-wall";
+import { ProjectsGallery } from "@/components/home/projects-gallery";
+import { ExperienceTimeline } from "@/components/home/experience-timeline";
+import { ContactCta } from "@/components/home/contact-cta";
 
 export default function HomePage() {
   return (
-    <AppShell>
-      <Navigation />
+    <SmoothScroll>
+      <InteractiveBackground />
+      <CursorDot />
+      <Header />
+      <div className="grain-overlay" aria-hidden="true" />
       <main>
-        <HeroSection />
-        <AboutSection />
-        <SkillsSection />
+        <HeroKinetic />
+        <Manifesto />
+        <SkillsWall />
+        <ProjectsGallery />
+        <ExperienceTimeline />
+        <ContactCta />
       </main>
-    </AppShell>
+      <Preloader />
+    </SmoothScroll>
   );
 }

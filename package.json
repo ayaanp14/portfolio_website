@@ -10,9 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-three/drei": "latest",
-    "@react-three/fiber": "latest",
-    "@react-three/postprocessing": "^3.0.4",
     "clsx": "latest",
     "framer-motion": "latest",
     "gsap": "latest",
@@ -21,8 +18,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-icons": "latest",
-    "tailwind-merge": "latest",
-    "three": "latest"
+    "tailwind-merge": "latest"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "latest",
