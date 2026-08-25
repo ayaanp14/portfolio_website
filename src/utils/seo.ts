@@ -10,7 +10,7 @@ export function personJsonLd() {
     telephone: profile.phone,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Bhopal",
+      addressLocality: "Indore",
       addressRegion: "Madhya Pradesh",
       addressCountry: "IN",
     },

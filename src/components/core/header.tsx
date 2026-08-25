@@ -1,175 +1,134 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
-import gsap from "gsap";
-import { FiArrowUpRight } from "react-icons/fi";
+import { FiGithub, FiMenu, FiX } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { ThemeToggle } from "@/components/core/theme-toggle";
 import { navigationItems } from "@/config/navigation";
 import { profile } from "@/data/profile";
+import { useSystemStore } from "@/lib/system-store";
+import { scrambleText } from "@/lib/scramble";
+
+function ScrambleLink({ label, href }: { label: string; href: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const cancelRef = useRef<(() => void) | null>(null);
+
+  return (
+    <a
+      href={href}
+      className="nav-link font-mono text-[11px] tracking-[0.18em] text-muted hover:text-signal"
+      data-cursor="TARGET"
+      onPointerEnter={() => {
+        if (ref.current) {
+          cancelRef.current?.();
+          cancelRef.current = scrambleText(ref.current, `_${label}`, 450);
+        }
+      }}
+    >
+      <span ref={ref}>_{label}</span>
+    </a>
+  );
+}
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false);
-  const overlayRef = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 28 });
+  const booted = useSystemStore((s) => s.booted);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const overlay = overlayRef.current;
-
-    if (!overlay) {
-      return;
-    }
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (isOpen) {
-      document.body.classList.add("is-locked");
-      gsap
-        .timeline()
-        .fromTo(
-          overlay,
-          { clipPath: "inset(0 0 100% 0)" },
-          {
-            clipPath: "inset(0 0 0% 0)",
-            duration: reduced ? 0.01 : 0.7,
-            ease: "power4.inOut",
-          },
-        )
-        .fromTo(
-          overlay.querySelectorAll("[data-menu-link]"),
-          { yPercent: 130, rotate: 4 },
-          {
-            yPercent: 0,
-            rotate: 0,
-            duration: reduced ? 0.01 : 0.7,
-            stagger: 0.07,
-            ease: "power4.out",
-          },
-          reduced ? 0 : "-=0.25",
-        )
-        .fromTo(
-          overlay.querySelectorAll("[data-menu-meta]"),
-          { autoAlpha: 0, y: 16 },
-          { autoAlpha: 1, y: 0, duration: reduced ? 0.01 : 0.5, stagger: 0.06 },
-          reduced ? 0 : "-=0.4",
-        );
-      return;
-    }
-
-    document.body.classList.remove("is-locked");
-    gsap.to(overlay, {
-      clipPath: "inset(0 0 100% 0)",
-      duration: reduced ? 0.01 : 0.55,
-      ease: "power4.inOut",
-    });
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isOpen]);
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   return (
     <>
-      {/* Scroll progress hairline */}
-      <motion.div
-        aria-hidden="true"
-        style={{ scaleX: progress }}
-        className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left bg-accent"
-      />
-
-      <header className="fixed inset-x-0 top-0 z-[60] mix-blend-difference">
-        <div className="flex items-center justify-between px-6 py-5 md:px-10 text-[#f1ede6]">
-          <a href="#home" className="font-display text-sm font-bold uppercase tracking-[0.3em]">
-            {profile.initials} — {profile.name.split(" ")[0]}
+      <motion.header
+        initial={{ y: -70, opacity: 0 }}
+        animate={booted ? { y: 0, opacity: 1 } : {}}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="fixed inset-x-0 top-0 z-[70] border-b border-line bg-void/70 backdrop-blur-md"
+      >
+        <div className="mx-auto flex h-14 max-w-[1500px] items-center justify-between px-5 md:px-8">
+          <a
+            href="#home"
+            className="sys-heading text-[17px] font-bold tracking-[0.1em] text-white"
+            data-cursor="TARGET"
+            aria-label="Ayaan Pathan — home"
+          >
+            {profile.initials}
+            <span className="cursor-blink text-signal">_</span>
           </a>
 
-          <div className="flex items-center gap-5">
-            <ThemeToggle className="size-9 border-[#f1ede6]/60 bg-[#f1ede6]/10 text-[#f1ede6] hover:border-[#f1ede6] hover:bg-[#f1ede6]/20 hover:text-[#f1ede6]" />
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+            {navigationItems.map((item) => (
+              <ScrambleLink key={item.href} label={item.label} href={item.href} />
+            ))}
+            <span className="status-dot" aria-hidden="true" />
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <a
+              href={profile.links.github}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-system hidden py-2 md:inline-flex"
+              data-cursor="EXECUTE"
+            >
+              VIEW CODE
+              <FiGithub aria-hidden="true" />
+            </a>
             <button
               type="button"
-              onClick={() => setIsOpen((open) => !open)}
-              aria-expanded={isOpen}
-              aria-controls="site-menu"
-              className="font-display text-sm font-bold uppercase tracking-[0.3em]"
+              className="btn-system px-3 py-2 lg:hidden"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-expanded={menuOpen}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
             >
-              {isOpen ? "Close" : "Menu"}
+              {menuOpen ? <FiX /> : <FiMenu />}
             </button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Fullscreen menu */}
-      <div
-        ref={overlayRef}
-        id="site-menu"
-        aria-hidden={!isOpen}
-        className="fixed inset-0 z-50 bg-ink text-paper"
-        style={{ clipPath: "inset(0 0 100% 0)" }}
-      >
-        <div
-          data-lenis-prevent
-          className="flex h-full flex-col justify-between gap-10 overflow-y-auto px-6 pb-10 pt-24 md:px-10"
-        >
-          <nav aria-label="Site sections">
-            <ol className="flex flex-col">
-              {navigationItems.map((item, index) => (
-                <li key={item.href} className="overflow-hidden border-b border-paper/15">
-                  <a
-                    href={item.href}
-                    data-menu-link
-                    onClick={() => setIsOpen(false)}
-                    className="group flex items-baseline gap-5 py-2.5 will-change-transform md:py-3"
-                  >
-                    <span className="font-display text-xs font-medium text-accent">
-                      0{index + 1}
-                    </span>
-                    <span className="font-display text-[clamp(1.9rem,6.5vh,4.6rem)] font-bold uppercase leading-[1.05] tracking-tight transition-transform duration-500 group-hover:translate-x-4">
-                      {item.label}
-                    </span>
-                    <FiArrowUpRight
-                      className="ml-auto size-6 opacity-0 transition-all duration-500 group-hover:opacity-100"
-                      aria-hidden="true"
-                    />
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </nav>
-
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div data-menu-meta className="flex flex-col gap-1 text-sm text-paper/60">
-              <a href={`mailto:${profile.email}`} className="link-sweep w-fit text-paper">
-                {profile.email}
-              </a>
-              <span>{profile.location}</span>
-            </div>
-
-            <div data-menu-meta className="flex items-center gap-5 text-sm uppercase tracking-widest">
-              <a href={profile.links.github} target="_blank" rel="noreferrer" className="link-sweep">
-                GitHub
-              </a>
-              <a href={profile.links.linkedin} target="_blank" rel="noreferrer" className="link-sweep">
-                LinkedIn
-              </a>
-              <ThemeToggle className="border-paper/30 text-paper hover:border-accent" />
-            </div>
-          </div>
-        </div>
-      </div>
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
+            animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
+            exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-0 z-[69] flex flex-col justify-center gap-2 bg-void/95 px-8 backdrop-blur-lg lg:hidden"
+            aria-label="Mobile"
+          >
+            <p className="sys-label mb-6">{"// NAVIGATION"}</p>
+            {navigationItems.map((item, i) => (
+              <motion.a
+                key={item.href}
+                href={item.href}
+                initial={{ x: -24, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.1 + i * 0.05 }}
+                onClick={() => setMenuOpen(false)}
+                className="sys-heading border-b border-line-soft py-4 text-2xl font-semibold text-white"
+              >
+                <span className="mr-3 font-mono text-xs text-signal">
+                  0{i + 1}
+                </span>
+                _{item.label}
+              </motion.a>
+            ))}
+            <a
+              href={profile.links.github}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-system mt-8 self-start"
+            >
+              VIEW CODE <FiGithub aria-hidden="true" />
+            </a>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -4,6 +4,8 @@ export type ProjectMetric = {
   suffix?: string;
 };
 
+export type HologramKind = "occupancy" | "chat" | "editor" | "qr";
+
 export type ProjectData = {
   id: string;
   title: string;
@@ -12,6 +14,10 @@ export type ProjectData = {
   role: string;
   duration: string;
   stack: string[];
+  /** Two-column feature bullets shown in the featured-project panel */
+  features: string[];
+  /** Which mini-visualization the holographic preview renders */
+  hologram: HologramKind;
   links: {
     live?: string;
     github?: string;
@@ -35,6 +41,15 @@ export const projectsData: ProjectData[] = [
     role: "Full-Stack Developer",
     duration: "2026 - Present",
     stack: ["React", "Node.js", "Express", "REST APIs", "Azure", "GitHub Actions"],
+    features: [
+      "Digital police verification logbook",
+      "Booking & room inventory management",
+      "Live occupancy tracking",
+      "Tenant records & reporting",
+      "Admin analytics dashboards",
+      "Azure CI/CD deployment",
+    ],
+    hologram: "occupancy",
     links: {
       live: "https://truehostel.in",
     },
@@ -64,6 +79,15 @@ export const projectsData: ProjectData[] = [
     role: "Full-Stack Developer",
     duration: "2026 - Present",
     stack: ["Next.js", "Express 5", "MongoDB", "Socket.IO", "BullMQ", "Zod", "Azure"],
+    features: [
+      "One-line embeddable chat widget",
+      "Multi-tenant workspace isolation",
+      "Realtime agent dashboard",
+      "Outbound email campaigns on BullMQ",
+      "Open / click tracking",
+      "Live widget restyling over sockets",
+    ],
+    hologram: "chat",
     links: {
       live: "https://codinginfotechchatfrontend-eyggg5a3d9gpa8ee.eastus-01.azurewebsites.net/",
     },
@@ -90,6 +114,15 @@ export const projectsData: ProjectData[] = [
     role: "Creator & Full-Stack Developer",
     duration: "Personal Project",
     stack: ["React", "Node.js", "Socket.IO", "Judge0", "Monaco Editor", "Material UI"],
+    features: [
+      "High-concurrency Judge0 execution engine",
+      "Pair Mode — live code sync",
+      "Shared cursors & shared execution",
+      "JWT + OTP + rate-limited auth",
+      "XP, streaks & gamification",
+      "Analytics dashboards",
+    ],
+    hologram: "editor",
     links: {
       live: "https://codexa-frontend.vercel.app",
       github: "https://github.com/ayaanp14",
@@ -120,6 +153,13 @@ export const projectsData: ProjectData[] = [
     role: "Creator & Full-Stack Developer",
     duration: "Personal Project",
     stack: ["Node.js", "Express", "REST APIs", "MySQL"],
+    features: [
+      "Text-to-QR generation",
+      "Image upload QR decoding",
+      "Built-in URL shortening",
+      "MySQL metadata tracking",
+    ],
+    hologram: "qr",
     links: {
       github: "https://github.com/ayaanp14",
     },
