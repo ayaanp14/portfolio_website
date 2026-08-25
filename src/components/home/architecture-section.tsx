@@ -56,7 +56,7 @@ export function ArchitectureSection() {
               </p>
               <a
                 href="#projects"
-                className="flex items-center gap-2 font-mono text-[10px] tracking-[0.18em] text-muted transition-colors hover:text-signal"
+                className="hidden items-center gap-2 font-mono text-[10px] tracking-[0.18em] text-muted transition-colors hover:text-signal sm:flex"
                 data-cursor="INSPECT"
               >
                 EXPLORE ARCHITECTURE

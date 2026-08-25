@@ -70,7 +70,7 @@ export function SystemCursor() {
   }, []);
 
   return (
-    <div aria-hidden="true" className="hidden md:block">
+    <div aria-hidden="true" className="system-cursor">
       <div
         ref={dotRef}
         className="pointer-events-none fixed left-0 top-0 z-[95] -ml-[3px] -mt-[3px] size-1.5 rounded-full bg-signal shadow-[0_0_8px_#00ff88]"

@@ -60,6 +60,13 @@ type ArchSceneProps = {
   progressRef: MutableRefObject<number>;
 };
 
+/**
+ * Shared per-frame layout state: narrow viewports switch the scene into a
+ * "pan" mode where the camera travels along the panel row instead of
+ * shrinking the whole row into view.
+ */
+type Rig = { mobile: boolean; scale: number };
+
 /* ------------------------------------------------------------------ */
 /* Geometry + shader helpers                                           */
 /* ------------------------------------------------------------------ */
@@ -204,6 +211,7 @@ type NodeProps = {
   tech: string;
   progressRef: MutableRefObject<number>;
   arch: ArchQuality;
+  rig: MutableRefObject<Rig>;
 };
 
 /**
@@ -212,12 +220,11 @@ type NodeProps = {
  * slice of the scroll progresses. Text and brand logos live in a
  * perspective-transformed HTML card etched onto the glass front face.
  */
-function ArchNode({ index, layerId, title, tech, progressRef, arch }: NodeProps) {
+function ArchNode({ index, layerId, title, tech, progressRef, arch, rig }: NodeProps) {
   const groupRef = useRef<THREE.Group>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const ledRef = useRef<THREE.MeshBasicMaterial>(null);
   const targetX = (index - 2) * NODE_SPACING;
-  const activateAt = 0.05 + index * 0.11;
   const centerTilt = -(index - 2) * 0.07;
 
   const moteMaterial = useMemo(() => makeSoftPointsMaterial(0.03, "#00e5ff", 0.55, false), []);
@@ -256,6 +263,9 @@ function ArchNode({ index, layerId, title, tech, progressRef, arch }: NodeProps)
 
     const t = state.clock.elapsedTime;
     const p = progressRef.current;
+    // panels assemble earlier in pan mode so each is built before the
+    // camera reaches it
+    const activateAt = rig.current.mobile ? 0.02 + index * 0.09 : 0.05 + index * 0.11;
     const local = THREE.MathUtils.clamp((p - activateAt) / 0.16, 0, 1);
     const eased = 1 - Math.pow(1 - local, 3);
 
@@ -534,13 +544,18 @@ function StreamField({ specs, progressRef, lineColor, lineOpacity, particleSize 
       (spec) => new THREE.Line(new THREE.BufferGeometry().setFromPoints(spec.samples), lineMaterial),
     );
 
+    const hash = (n: number) => {
+      const s = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+      return s - Math.floor(s);
+    };
     const particles: { spec: StreamSpec; t: number; speed: number }[] = [];
-    specs.forEach((spec) => {
+    specs.forEach((spec, si) => {
       for (let i = 0; i < spec.count; i++) {
+        const seed = si * 131 + i;
         particles.push({
           spec,
-          t: Math.random(),
-          speed: THREE.MathUtils.lerp(spec.speedMin, spec.speedMax, Math.random()),
+          t: hash(seed),
+          speed: THREE.MathUtils.lerp(spec.speedMin, spec.speedMax, hash(seed + 61)),
         });
       }
     });
@@ -687,24 +702,47 @@ function Floor({ reflections }: { reflections: boolean }) {
 
 const ORIGIN = new THREE.Vector3(0, 0, 0);
 
-/** Scales the panel row so all five layers stay inside the view on narrow screens. */
-function ResponsiveGroup({ children }: { children: ReactNode }) {
+/**
+ * Sizes the panel row for the viewport. Wide screens shrink the row to fit;
+ * narrow screens keep panels near full size (the camera pans instead) and
+ * the row is re-anchored so pedestals stay in contact with the floor.
+ */
+function ResponsiveGroup({ children, rig }: { children: ReactNode; rig: MutableRefObject<Rig> }) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (!groupRef.current) return;
     const view = state.viewport.getCurrentViewport(state.camera, ORIGIN);
-    const scale = THREE.MathUtils.clamp(view.width / 12.6, 0.42, 1.06);
+    const mobile = view.width < 7.2;
+    const scale = mobile
+      ? THREE.MathUtils.clamp(view.width / 4.6, 0.55, 0.95)
+      : THREE.MathUtils.clamp(view.width / 12.6, 0.42, 1.06);
+    rig.current.mobile = mobile;
+    rig.current.scale = scale;
     groupRef.current.scale.setScalar(scale);
+    groupRef.current.position.y = FLOOR_Y * (1 - scale);
   });
 
   return <group ref={groupRef}>{children}</group>;
 }
 
-function CameraRig({ progressRef }: ArchSceneProps) {
+function CameraRig({ progressRef, rig }: ArchSceneProps & { rig: MutableRefObject<Rig> }) {
   useFrame((state, delta) => {
     const p = progressRef.current;
     const cam = state.camera;
+
+    if (rig.current.mobile) {
+      // travel along the row: each panel passes through center frame
+      const span = 2 * NODE_SPACING * rig.current.scale;
+      const t = THREE.MathUtils.clamp((p - 0.1) / 0.8, 0, 1);
+      const targetX = THREE.MathUtils.lerp(-span, span, t) + state.pointer.x * 0.15;
+      cam.position.x = THREE.MathUtils.damp(cam.position.x, targetX, 3, delta);
+      cam.position.z = THREE.MathUtils.damp(cam.position.z, 7.2 - p * 0.5, 3, delta);
+      cam.position.y = THREE.MathUtils.damp(cam.position.y, 1.0 - p * 0.25, 3, delta);
+      cam.lookAt(cam.position.x, -0.45, 0);
+      return;
+    }
+
     cam.position.z = THREE.MathUtils.damp(cam.position.z, 8.5 - p * 1.3, 3, delta);
     cam.position.y = THREE.MathUtils.damp(cam.position.y, 1.55 - p * 0.65, 3, delta);
     cam.position.x = THREE.MathUtils.damp(cam.position.x, state.pointer.x * 0.35, 2, delta);
@@ -716,6 +754,7 @@ function CameraRig({ progressRef }: ArchSceneProps) {
 function ArchScene({ progressRef }: ArchSceneProps) {
   const preset = useMemo(() => qualityPreset[detectQuality()], []);
   const arch = preset.arch;
+  const rig = useRef<Rig>({ mobile: false, scale: 1 });
 
   const gapStreams = useMemo(() => buildGapStreams(arch.braids, arch.gapParticles), [arch]);
   const floorStreams = useMemo(() => buildFloorStreams(arch.floorStreams, arch.floorParticles), [arch]);
@@ -739,9 +778,9 @@ function ArchScene({ progressRef }: ArchSceneProps) {
         <Lightformer intensity={0.6} position={[0, -3, 2]} scale={[7, 2, 1]} color="#0e5c4a" />
       </Environment>
 
-      <CameraRig progressRef={progressRef} />
+      <CameraRig progressRef={progressRef} rig={rig} />
 
-      <ResponsiveGroup>
+      <ResponsiveGroup rig={rig}>
         {architectureLayers.map((layer, i) => (
           <ArchNode
             key={layer.id}
@@ -751,6 +790,7 @@ function ArchScene({ progressRef }: ArchSceneProps) {
             tech={layer.tech}
             progressRef={progressRef}
             arch={arch}
+            rig={rig}
           />
         ))}
 

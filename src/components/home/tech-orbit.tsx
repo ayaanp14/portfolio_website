@@ -123,6 +123,10 @@ export function TechOrbit() {
       // orbit slows to a crawl while inspecting a node
       angle += dt * (hoveredSkill ? 0.05 : 0.3);
 
+      // narrow screens: rounder orbits + smaller nodes so 22 tiles don't
+      // pile up in the middle
+      const narrow = w < 480;
+
       /* ---- node placement ---- */
       for (const item of items) {
         const el = itemRefs.current.get(item.skill.id);
@@ -130,7 +134,7 @@ export function TechOrbit() {
         const dir = item.ring % 2 === 0 ? 1 : -1;
         const a = angle * dir * (1 - item.ring * 0.18) + item.phase;
         const rx = Math.min(w, 460) * (0.2 + item.ring * 0.125);
-        const ry = rx * 0.4;
+        const ry = rx * (narrow ? 0.52 : 0.4);
         const x = cx + Math.cos(a) * rx;
         const y = cy + Math.sin(a) * ry;
         const depth = (Math.sin(a) + 1) / 2; // 0 back, 1 front
@@ -155,7 +159,8 @@ export function TechOrbit() {
         const scale =
           (0.66 + depth * 0.42) *
           (item.ring === 0 ? 1.08 : 1) *
-          (isHovered ? 1.32 : isRelated ? 1.12 : 1);
+          (isHovered ? 1.32 : isRelated ? 1.12 : 1) *
+          (narrow ? 0.8 : 1);
 
         el.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) scale(${scale})`;
         el.style.opacity = String(opacity);
@@ -301,11 +306,10 @@ export function TechOrbit() {
           <div
             key={ring}
             aria-hidden="true"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-line"
+            className="absolute left-1/2 top-1/2 aspect-[1/0.4] max-[480px]:aspect-[1/0.52] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-line"
             style={{
               width: `${(0.2 + ring * 0.125) * 2 * 100}%`,
               maxWidth: 460 * (0.4 + ring * 0.25),
-              aspectRatio: "1 / 0.4",
             }}
           />
         ))}

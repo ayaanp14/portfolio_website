@@ -358,6 +358,15 @@ html[data-cursor-active] button {
   cursor: none !important;
 }
 
+/* Custom cursor renders only once a fine pointer is confirmed */
+.system-cursor {
+  display: none;
+}
+
+html[data-cursor-active] .system-cursor {
+  display: block;
+}
+
 /* Reduced motion: kill decorative animation */
 @media (prefers-reduced-motion: reduce) {
   *,
