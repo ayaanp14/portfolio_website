@@ -29,11 +29,17 @@ export type ProjectData = {
     results: string;
   };
   image?: string;
+  /** Short shop-sign category, e.g. "SaaS platform" */
+  category: string;
+  /** Screenshot of the live product, shown in the shop window */
+  screenshot?: string;
 };
 
 export const projectsData: ProjectData[] = [
   {
     id: "truehostel",
+    category: "SaaS platform",
+    screenshot: "/projects/truehostel.png",
     title: "TrueHostel",
     tagline: "Hostel Management SaaS Platform",
     description:
@@ -72,6 +78,8 @@ export const projectsData: ProjectData[] = [
   },
   {
     id: "codinginfobot",
+    category: "SaaS platform",
+    screenshot: "/projects/codinginfobot.png",
     title: "CodingInfoBot",
     tagline: "Embeddable Chatbot & Support SaaS",
     description:
@@ -106,8 +114,10 @@ export const projectsData: ProjectData[] = [
     },
   },
   {
-    id: "codexa",
-    title: "Codexa",
+    id: "codekairo",
+    category: "Coding platform",
+    screenshot: "/projects/codekairo.png",
+    title: "CodeKairo",
     tagline: "Competitive Coding & Bug-Hunting Platform",
     description:
       "A full-stack competitive coding platform with a high-concurrency code execution engine, real-time pair programming, and a gamification system designed to keep developers coming back.",
@@ -124,7 +134,7 @@ export const projectsData: ProjectData[] = [
     ],
     hologram: "editor",
     links: {
-      live: "https://codexa-frontend.vercel.app",
+      live: "https://codekairo.com",
       github: "https://github.com/ayaanp14",
     },
     metrics: [
@@ -146,6 +156,7 @@ export const projectsData: ProjectData[] = [
   },
   {
     id: "qrify",
+    category: "Full-stack app",
     title: "Qrify",
     tagline: "QR Code Generator & Decoder",
     description:

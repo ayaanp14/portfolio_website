@@ -11,7 +11,7 @@ export const architectureLayers: ArchitectureLayer[] = [
     id: "frontend",
     title: "FRONTEND",
     tech: "React / Next.js",
-    detail: "Component-driven UIs across TrueHostel, Viasocket and Codexa",
+    detail: "Component-driven UIs across TrueHostel, Viasocket and CodeKairo",
   },
   {
     id: "backend",

@@ -1,61 +1,39 @@
 import { SmoothScroll } from "@/components/core/smooth-scroll";
-import { BackgroundGrid } from "@/components/core/background-grid";
-import { BootSequence } from "@/components/core/boot-sequence";
-import { SystemCursor } from "@/components/core/system-cursor";
-import { Header } from "@/components/core/header";
-import { SocialRail } from "@/components/core/social-rail";
-import { Footer } from "@/components/core/footer";
-import { Hero } from "@/components/home/hero";
-import { ArchitectureSection } from "@/components/home/architecture-section";
-import { ProjectsSection } from "@/components/home/projects-section";
-import { ExperienceTimeline } from "@/components/home/experience-timeline";
-import { Terminal } from "@/components/home/terminal";
-import { TechOrbit } from "@/components/home/tech-orbit";
-import { Exploring } from "@/components/home/exploring";
-import { GithubActivity } from "@/components/home/github-activity";
-import { Contact } from "@/components/home/contact";
+import { Cursor } from "@/components/interactions/cursor";
+import { Loader } from "@/components/interactions/loader";
+import { MagneticPills } from "@/components/interactions/magnetic-pills";
+import { ThemeController } from "@/components/interactions/theme-toggle";
+import { TiltCards } from "@/components/interactions/tilt-cards";
+import { Navbar } from "@/components/navigation/navbar";
+import { HeroSection } from "@/components/sections/hero-section";
+import { StreetSection } from "@/components/sections/street-section";
+import { FactorySection } from "@/components/sections/factory-section";
+import { HoodSection } from "@/components/sections/hood-section";
+import { MissionsSection } from "@/components/sections/missions-section";
+import { FinaleSection } from "@/components/sections/finale-section";
 
+/**
+ * AYAAN IN THE CODE — every product has two sides.
+ * Six chapters: the split story, the street of shipped products, the
+ * factory behind them, the developer, the missions, and the finale.
+ */
 export default function HomePage() {
   return (
     <SmoothScroll>
-      <BackgroundGrid />
-      <SystemCursor />
-      <Header />
-      <SocialRail />
-
-      <div className="scanline-overlay" aria-hidden="true" />
-      <div className="vignette-overlay" aria-hidden="true" />
-
+      <ThemeController />
+      <Navbar />
       <main>
-        <Hero />
-        <ArchitectureSection />
-        <ProjectsSection />
-
-        <section
-          id="experience"
-          aria-label="Experience, terminal and technology stack"
-          className="mx-auto grid max-w-[1500px] grid-cols-1 gap-4 px-5 py-12 md:px-8 lg:grid-cols-3 xl:pr-20"
-        >
-          <ExperienceTimeline />
-          <Terminal />
-          <div id="stack">
-            <TechOrbit />
-          </div>
-        </section>
-
-        <section
-          id="contact"
-          aria-label="Currently exploring, GitHub activity and contact"
-          className="mx-auto grid max-w-[1500px] grid-cols-1 gap-4 px-5 pb-16 md:px-8 lg:grid-cols-3 xl:pr-20"
-        >
-          <Exploring />
-          <GithubActivity />
-          <Contact />
-        </section>
+        <HeroSection />
+        <StreetSection />
+        <FactorySection />
+        <HoodSection />
+        <MissionsSection />
+        <FinaleSection />
       </main>
-
-      <Footer />
-      <BootSequence />
+      <Loader />
+      <MagneticPills />
+      <Cursor />
+      <TiltCards />
     </SmoothScroll>
   );
 }

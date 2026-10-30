@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
+import { MotionConfig } from "framer-motion";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { setLenis } from "@/lib/lenis-store";
@@ -15,13 +16,18 @@ gsap.registerPlugin(ScrollTrigger);
  */
 export function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
+    // Late-loading fonts change text metrics — re-measure every trigger
+    document.fonts?.ready.then(() => ScrollTrigger.refresh());
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
 
+    // Lerp (not duration) so consecutive wheel notches blend into one glide
+    // instead of each restarting its own ease-out
     const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.075,
+      wheelMultiplier: 0.9,
       smoothWheel: true,
     });
 
@@ -63,5 +69,5 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return <>{children}</>;
+  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }

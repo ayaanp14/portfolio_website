@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   experimental: {
-    optimizePackageImports: ["react-icons", "@react-three/drei", "framer-motion"],
+    optimizePackageImports: ["react-icons", "framer-motion"],
   },
   images: {
     formats: ["image/avif", "image/webp"],
