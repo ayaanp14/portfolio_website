@@ -16,7 +16,7 @@ import { cn } from "@/lib/cn";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Which side of the story a section shows: FRONT, BACK, or neutral (follows the page theme). */
-type Tone = "front" | "back" | "theme";
+type Tone = "front" | "back" | "night" | "theme";
 
 /**
  * Reads data-tone-left/right ("light" = FRONT side, "dark" = BACK side,
@@ -29,7 +29,7 @@ function toneAt(y: number, side: "left" | "right"): Tone {
     const r = s.getBoundingClientRect();
     if (r.top <= y && r.bottom > y) {
       const t = s.dataset[side === "left" ? "toneLeft" : "toneRight"];
-      return t === "dark" ? "back" : t === "light" ? "front" : "theme";
+      return t === "dark" ? "back" : t === "light" ? "front" : t === "night" ? "night" : "theme";
     }
   }
   return "theme";
@@ -46,14 +46,14 @@ export function scrollToHash(hash: string) {
 function LocalClock() {
   const [time, setTime] = useState("--:--");
   useEffect(() => {
-    const fmt = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" });
+    const fmt = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata" });
     const update = () => setTime(fmt.format(new Date()));
     update();
     const id = window.setInterval(update, 30_000);
     return () => window.clearInterval(id);
   }, []);
   return (
-    <span className="label hidden items-center gap-2 !text-ink lg:inline-flex">
+    <span className="hidden items-center gap-2 text-[13px] text-ink lg:inline-flex">
       <span className="pulse-dot size-1.5 rounded-full bg-accent" aria-hidden="true" />
       Indore <span className="tabular-nums">{time}</span>
     </span>
@@ -72,7 +72,6 @@ export function Navbar() {
   const barRef = useRef<HTMLSpanElement>(null);
   const fadeL = useRef<HTMLDivElement>(null);
   const fadeR = useRef<HTMLDivElement>(null);
-  const pctRef = useRef<HTMLSpanElement>(null);
 
   // Tone + progress follow the scroll without React renders
   useEffect(() => {
@@ -83,6 +82,8 @@ export function Navbar() {
         if (!el) return;
         el.classList.toggle("tone-front", tone === "front");
         el.classList.toggle("tone-back", tone === "back");
+        // Always-dark sections, whatever the theme
+        el.classList.toggle("tone-dark", tone === "night");
       };
       const tl = toneAt(36, "left");
       const tr = toneAt(36, "right");
@@ -102,7 +103,6 @@ export function Navbar() {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
       if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
-      if (pctRef.current) pctRef.current.textContent = `${Math.round(p * 100)}%`;
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -147,7 +147,7 @@ export function Navbar() {
         initial={{ opacity: 0, y: -16 }}
         animate={show}
         transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
-        className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex h-20 items-center justify-between px-[4vw]"
+        className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex h-20 items-center justify-between gap-6 px-[4vw]"
       >
         <div ref={leftRef} className="tone-front pointer-events-auto">
           <a href="#index" className="group flex items-center gap-3" aria-label="Ayaan Pathan — back to the start">
@@ -159,29 +159,38 @@ export function Navbar() {
           </a>
         </div>
 
-        <div ref={rightRef} className="tone-back pointer-events-auto flex items-center gap-7">
-          <nav aria-label="Primary" className="hidden items-center gap-7 md:flex">
+        <div ref={rightRef} className="tone-back pointer-events-auto flex items-center gap-5">
+          <nav aria-label="Primary" className="mr-[clamp(0rem,6vw,8rem)] hidden items-center gap-[clamp(1.25rem,3vw,3rem)] md:flex">
             {navigationItems.map((item) => {
-              const active = item.chapter === chapter || (item.label === "Work" && chapter > 0 && chapter < 5);
+              const active = item.chapter === chapter || (item.label === "Work" && chapter === 2);
               return (
                 <a
                   key={item.href}
                   href={item.href}
                   data-active={active}
                   aria-current={active ? "location" : undefined}
-                  className={cn("link-sweep font-mono text-[11px] uppercase tracking-[0.2em]", active ? "font-semibold text-ink" : "text-muted hover:text-ink")}
+                  className={cn(
+                    "relative py-1 text-[14px] transition-colors after:absolute after:inset-x-0 after:-bottom-1.5 after:h-[2px] after:origin-left after:rounded-full after:bg-accent after:transition-transform after:duration-500",
+                    active ? "font-medium text-ink after:scale-x-100" : "text-muted after:scale-x-0 hover:text-ink",
+                  )}
                 >
                   {item.label}
                 </a>
               );
             })}
           </nav>
-          <span className="hidden h-5 w-px bg-line-strong lg:block" aria-hidden="true" />
           <LocalClock />
-          <span ref={pctRef} className="w-9 text-right font-mono text-[11px] tabular-nums text-ink" aria-label="Page progress">
-            0%
-          </span>
-          <ThemeToggle />
+          <ThemeToggle compact />
+          <a
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToHash("#contact");
+            }}
+            className="hidden h-10 items-center gap-2 rounded-full bg-ink px-5 text-[13px] font-medium text-bg transition-colors hover:bg-accent hover:text-white sm:inline-flex"
+          >
+            Let&apos;s Talk <FiArrowUpRight aria-hidden="true" />
+          </a>
           <button
             type="button"
             onClick={() => setOpen(true)}
@@ -199,8 +208,8 @@ export function Navbar() {
       <motion.div
         ref={railRef}
         initial={{ opacity: 0 }}
-        animate={booted ? { opacity: 1 } : {}}
-        transition={{ duration: 0.8, delay: 0.6 }}
+        animate={booted ? { opacity: chapter === 1 ? 0 : 1 } : {}}
+        transition={{ duration: 0.5 }}
         className="tone-back fixed right-[1.6vw] top-1/2 z-[55] hidden -translate-y-1/2 md:block"
       >
         <ol className="flex flex-col items-end gap-3.5" aria-label="Chapters">

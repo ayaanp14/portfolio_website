@@ -10,9 +10,11 @@ export const chapters = [
 
 export type ChapterId = (typeof chapters)[number]["id"];
 
-/** Primary navigation — deliberately minimal, like the reference. */
+/** Primary navigation. Work covers the street and the factory. */
 export const navigationItems = [
   { label: "Index", href: "#index", chapter: 0 },
   { label: "Work", href: "#street", chapter: 1 },
+  { label: "About", href: "#hood", chapter: 3 },
+  { label: "Services", href: "#missions", chapter: 4 },
   { label: "Contact", href: "#contact", chapter: 5 },
 ] as const;

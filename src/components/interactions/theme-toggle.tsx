@@ -32,7 +32,7 @@ export function ThemeController() {
   return null;
 }
 
-export function ThemeToggle({ className }: { className?: string }) {
+export function ThemeToggle({ className, compact }: { className?: string; compact?: boolean }) {
   const theme = useSite((s) => s.theme);
   const setTheme = useSite((s) => s.setTheme);
   const next: ThemeName = theme === "dark" ? "light" : "dark";
@@ -51,7 +51,8 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={`Switch to ${next} mode`}
       title={`Switch to ${next} mode`}
       className={cn(
-        "group inline-flex h-8 items-center gap-2 rounded-full border border-line-strong px-3 font-mono text-[10px] uppercase tracking-[0.16em] text-ink transition-colors hover:border-accent",
+        "group inline-flex items-center justify-center gap-2 rounded-full border border-line-strong font-mono text-[10px] uppercase tracking-[0.16em] text-ink transition-colors hover:border-accent",
+        compact ? "size-10" : "h-8 px-3",
         className,
       )}
     >
@@ -65,7 +66,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           className={cn("absolute inset-0 size-3.5 transition-all duration-500", theme === "dark" ? "rotate-0 opacity-100" : "rotate-90 opacity-0")}
         />
       </span>
-      <span className="hidden sm:inline">{theme === "dark" ? "Night" : "Day"}</span>
+      {!compact && <span className="hidden sm:inline">{theme === "dark" ? "Night" : "Day"}</span>}
     </button>
   );
 }

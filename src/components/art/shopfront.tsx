@@ -3,31 +3,29 @@ import { useId } from "react";
 
 import type { ProjectData } from "@/data/projects";
 import { blue } from "@/styles/palette";
+import { stackWithIcons } from "@/lib/tech-icons";
 import { cn } from "@/lib/cn";
 
-type Look = { facade: string; awning: string; door: string; text: string; sign: string };
-
-/** Ink + blue colourways, cycled along the street */
-export const SHOP_LOOKS: Look[] = [
-  { facade: "#111111", awning: blue[800], door: blue[800], text: "#FFFFFF", sign: "#FFFFFF" },
-  { facade: blue[800], awning: "#111111", door: "#111111", text: "#FFFFFF", sign: "#FFFFFF" },
-  { facade: "#DCDCDC", awning: blue[800], door: "#111111", text: "#111111", sign: "#111111" },
-  { facade: blue[950], awning: blue[400], door: blue[400], text: "#FFFFFF", sign: "#FFFFFF" },
-];
-
-function Awning({ color }: { color: string }) {
+/** Scalloped blue/white awning */
+function Awning() {
   const id = useId().replace(/:/g, "");
   return (
-    <svg className="block h-[16%] w-full" preserveAspectRatio="none" viewBox="0 0 400 66" aria-hidden="true">
+    <svg className="relative z-10 -mx-[3%] block h-[18%] w-[106%] drop-shadow-[0_6px_8px_rgba(0,0,0,0.45)]" preserveAspectRatio="none" viewBox="0 0 400 60" aria-hidden="true">
       <defs>
-        <pattern id={`aw-${id}`} width={64} height={66} patternUnits="userSpaceOnUse">
-          <rect width={32} height={40} fill={color} />
-          <rect x={32} width={32} height={40} fill="#FFFFFF" />
-          <path d="M0 40 H32 V44 A16 16 0 0 1 0 44 Z" fill={color} />
-          <path d="M32 40 H64 V44 A16 16 0 0 1 32 44 Z" fill="#FFFFFF" />
+        <pattern id={`aw-${id}`} width={50} height={60} patternUnits="userSpaceOnUse">
+          <rect width={25} height={38} fill={blue[800]} />
+          <rect x={25} width={25} height={38} fill="#F5F5F5" />
+          <path d="M0 38 H25 V40 A12.5 12.5 0 0 1 0 40 Z" fill={blue[800]} />
+          <path d="M25 38 H50 V40 A12.5 12.5 0 0 1 25 40 Z" fill="#F5F5F5" />
         </pattern>
+        <linearGradient id={`sh-${id}`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity="0.18" />
+          <stop offset="1" stopColor="#000" stopOpacity="0.18" />
+        </linearGradient>
       </defs>
-      <rect width={400} height={66} fill={`url(#aw-${id})`} />
+      <rect width={400} height={4} fill="#1d2430" />
+      <rect y={3} width={400} height={57} fill={`url(#aw-${id})`} />
+      <rect y={3} width={400} height={35} fill={`url(#sh-${id})`} />
     </svg>
   );
 }
@@ -43,12 +41,8 @@ function BoardWindow() {
       <div className="flex flex-1 flex-col justify-evenly px-[7%]">
         {[0.72, 0.56, 0.64].map((w, i) => (
           <div key={i} className="flex items-center gap-[6%] border-b border-[#e3e3e3] pb-[4%]">
-            <div className="flex flex-1 flex-col gap-1">
-              <span className="h-1.5 rounded-full bg-ink-light" style={{ width: `${w * 100}%` }} />
-              <span className="h-1 w-[40%] rounded-full bg-[#c9c9c9]" />
-            </div>
-            <span className="rounded-sm bg-blue-100 px-1.5 py-0.5 font-mono text-[8px] text-blue-900">₹</span>
-            <span className={cn("rounded-sm px-1.5 py-0.5 font-mono text-[8px] uppercase text-white", i === 0 ? "bg-blue-800" : "bg-ink-light")}>Bid</span>
+            <span className="h-1.5 rounded-full bg-ink-light" style={{ width: `${w * 100}%` }} />
+            <span className={cn("ml-auto rounded-sm px-1.5 py-0.5 font-mono text-[8px] uppercase text-white", i === 0 ? "bg-blue-800" : "bg-ink-light")}>Bid</span>
           </div>
         ))}
       </div>
@@ -56,83 +50,107 @@ function BoardWindow() {
   );
 }
 
-export function Shopfront({
-  project,
-  index,
-  look,
-  active,
-}: {
-  project: ProjectData;
-  index: number;
-  look: Look;
-  active: boolean;
-}) {
+/** One project as a lit glass shopfront */
+export function Shopfront({ project, index, active }: { project: ProjectData; index: number; active: boolean }) {
+  const year = project.duration.match(/\d{4}/)?.[0] ?? (project.spotlight ? "Live" : "Personal");
   return (
-    <div data-tilt className="flex h-full w-full flex-col" style={{ backgroundColor: look.facade }}>
-      {/* Upper floor */}
-      <div className="relative h-[34%] px-[7%] pt-[6%]">
-        <div className="flex justify-between">
-          {[0, 1, 2].map((w) => (
-            <span
-              key={w}
-              className={cn("block h-[44px] w-[24%] border-b-[6px] border-[#cfcfcf] transition-colors duration-500 max-md:h-8", active ? "bg-blue-100" : "bg-paper-3")}
-            />
-          ))}
-        </div>
+    <div
+      className={cn(
+        "relative flex h-full w-full flex-col rounded-2xl border bg-[linear-gradient(180deg,#151a22,#0d1016)] px-[6%] pb-[5%] pt-[5%] transition-[border-color,box-shadow] duration-500",
+        active
+          ? "border-blue-500 shadow-[0_0_0_1px_var(--blue-500),0_0_38px_-4px_rgba(10,132,255,0.65),inset_0_0_30px_-12px_rgba(10,132,255,0.6)]"
+          : "border-white/10 shadow-[0_24px_50px_-24px_rgba(0,0,0,0.9)]",
+      )}
+    >
+      {/* Sign */}
+      <div className="flex items-center gap-3 pb-[5%]">
+        <span className="rounded-md bg-black/60 px-2 py-1 font-mono text-[11px] tabular-nums text-white ring-1 ring-white/10">{String(index + 1).padStart(2, "0")}</span>
+        <span className="display truncate text-[clamp(0.95rem,1.35vw,1.3rem)] text-white">{project.title}</span>
         {project.spotlight && (
-          <span className="absolute right-[5%] top-[6%] inline-flex items-center gap-2 rounded-full bg-white py-1 pl-2 pr-3 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-800 shadow-[0_6px_18px_-8px_rgba(0,0,0,0.5)] max-md:text-[8px]">
-            <span className="pulse-dot size-1.5 rounded-full bg-blue-800" aria-hidden="true" />★ Personal · Live
+          <span className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-blue-800 px-2 py-0.5 font-mono text-[8.5px] uppercase tracking-[0.14em] text-white">
+            <span className="pulse-dot size-1 rounded-full bg-white" aria-hidden="true" />
+            Live
           </span>
         )}
-        <div className="absolute bottom-[10%] left-[5%] flex items-center gap-3">
-          <span className="font-mono text-xs" style={{ color: look.text }}>
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <span className="display bg-white px-3 py-1 text-[clamp(1rem,1.9vw,1.6rem)] text-ink-light">{project.title}</span>
-        </div>
       </div>
 
-      <Awning color={look.awning} />
+      <Awning />
 
-      {/* Shop floor */}
-      <div className="relative flex flex-1 items-end gap-[6%] px-[6%] pb-[13%] pt-[4%]">
-        <div className="relative h-full flex-1 overflow-hidden border-[6px] border-[#2b2b2b] bg-white">
-          {project.screenshot ? (
-            <Image
-              src={project.screenshot}
-              alt={`${project.title} — live product screenshot`}
-              fill
-              sizes="(max-width: 768px) 70vw, 300px"
-              className={cn("object-cover object-top transition-transform duration-700", active && "scale-[1.04]")}
-            />
-          ) : (
-            <BoardWindow />
-          )}
-          <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,transparent_35%,rgba(255,255,255,0.22)_45%,transparent_55%)]" />
-          <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(115deg,transparent_30%,rgba(255,255,255,0.55)_48%,transparent_62%)] transition-transform duration-[1.1s] ease-out group-hover:translate-x-full" />
-        </div>
-        <div className="relative h-[72%] w-[15%] min-w-9" style={{ backgroundColor: look.door }}>
-          <span className="absolute inset-x-[18%] top-[10%] h-[24%] bg-white/45" />
-          <span className="absolute right-[16%] top-1/2 size-2 rounded-full bg-white" />
-        </div>
-        <p className="absolute bottom-[4%] left-[6%] font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: look.text }}>
-          {project.category} · {project.duration.match(/\d{4}/)?.[0] ?? (project.spotlight ? "Personal · Live" : "Personal")}
-        </p>
+      {/* Window */}
+      <div className="relative -mt-[2%] flex-1 overflow-hidden rounded-md border-[5px] border-[#1d2430] bg-white">
+        {project.screenshot ? (
+          <Image
+            src={project.screenshot}
+            alt={`${project.title} — live product screenshot`}
+            fill
+            sizes="(max-width: 768px) 70vw, 300px"
+            className={cn("object-cover object-top transition-transform duration-700", active && "scale-[1.04]")}
+          />
+        ) : (
+          <BoardWindow />
+        )}
+        <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,transparent_35%,rgba(255,255,255,0.16)_45%,transparent_55%)]" />
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center gap-2 pt-[5%]">
+        <span className="truncate font-mono text-[10px] uppercase tracking-[0.16em] text-white/80">
+          {project.category} · {year}
+        </span>
+        <span className="ml-auto flex shrink-0 gap-2.5">
+          {stackWithIcons(project.stack).map(({ name, Icon }) => (
+            <Icon key={name} title={name} className="size-4 text-blue-300" />
+          ))}
+        </span>
       </div>
     </div>
   );
 }
 
-/** Street lamp between shops */
+/** A street lantern with a cool glow */
 export function Lamp() {
   return (
-    <div className="relative flex h-[62%] w-6 shrink-0 flex-col items-center self-end" aria-hidden="true">
-      <span className="h-0 w-0 border-x-[10px] border-b-[16px] border-x-transparent border-b-blue-800" />
-      <span className="relative h-3 w-3 rounded-full bg-blue-300">
-        <span className="lamp-glow absolute left-1/2 top-1/2 size-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(124,201,255,0.75),transparent_65%)]" />
-      </span>
-      <span className="w-[5px] flex-1 bg-ink" />
-      <span className="h-3 w-5 bg-ink" />
+    <div className="relative flex h-[118%] w-7 shrink-0 flex-col items-center self-end" aria-hidden="true">
+      <span className="lamp-glow absolute top-[2%] size-28 -translate-y-1/3 rounded-full bg-[radial-gradient(circle,rgba(208,236,255,0.55),rgba(124,201,255,0.18)_40%,transparent_70%)]" />
+      <span className="h-1.5 w-2 rounded-t-full bg-[#2a3140]" />
+      <span className="h-0 w-0 border-x-[11px] border-b-[7px] border-x-transparent border-b-[#2a3140]" />
+      <span className="relative h-6 w-[18px] border-x-[3px] border-[#2a3140] bg-blue-50 shadow-[0_0_18px_6px_rgba(208,236,255,0.55)]" />
+      <span className="h-1.5 w-6 bg-[#2a3140]" />
+      <span className="w-[5px] flex-1 bg-gradient-to-b from-[#2a3140] to-[#151a22]" />
+      <span className="h-2.5 w-4 rounded-t-sm bg-[#2a3140]" />
+    </div>
+  );
+}
+
+/** Floating glass panels with a glowing code mark */
+export function GlassPanels({ className }: { className?: string }) {
+  return (
+    <div className={cn("pointer-events-none [perspective:1100px]", className)} aria-hidden="true">
+      <div className="float-y relative h-full w-full [animation-duration:7s] [transform-style:preserve-3d] [transform:rotateY(-24deg)_rotateX(8deg)]">
+        {[
+          { x: "58%", y: "-4%", z: -220, o: 0.35 },
+          { x: "40%", y: "4%", z: -140, o: 0.5 },
+          { x: "-6%", y: "26%", z: -110, o: 0.4 },
+          { x: "-22%", y: "40%", z: -200, o: 0.3 },
+        ].map((p, i) => (
+          <span
+            key={i}
+            className="absolute inset-[12%] rounded-xl border border-blue-300/30 bg-blue-500/10 backdrop-blur-[2px]"
+            style={{ transform: `translate3d(${p.x}, ${p.y}, ${p.z}px)`, opacity: p.o }}
+          />
+        ))}
+        <span className="absolute inset-[12%] flex items-center justify-center rounded-xl border border-blue-300/70 bg-[linear-gradient(145deg,rgba(10,132,255,0.35),rgba(0,59,117,0.55))] shadow-[0_0_60px_-6px_rgba(10,132,255,0.8),inset_0_0_40px_rgba(124,201,255,0.25)]">
+          <svg viewBox="0 0 64 40" className="w-[34%] drop-shadow-[0_0_10px_rgba(208,236,255,0.9)]" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 8 6 20l12 12M46 8l12 12-12 12M37 4 27 36" />
+          </svg>
+        </span>
+        {/* Data blocks rising off the front panel */}
+        <span className="absolute bottom-[4%] left-[2%] flex items-end gap-1.5 [transform:translateZ(40px)]">
+          {[28, 44, 34, 56, 40].map((h, i) => (
+            <span key={i} className="w-3 rounded-sm border border-blue-300/50 bg-blue-500/25 shadow-[0_0_12px_rgba(10,132,255,0.6)]" style={{ height: h }} />
+          ))}
+        </span>
+      </div>
     </div>
   );
 }
