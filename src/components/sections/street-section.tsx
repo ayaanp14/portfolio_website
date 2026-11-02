@@ -3,7 +3,7 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { FiArrowLeft, FiArrowRight, FiArrowUpRight, FiExternalLink, FiGithub, FiLayers } from "react-icons/fi";
+import { FiArrowLeft, FiArrowRight, FiArrowUpRight, FiGithub, FiLayers } from "react-icons/fi";
 
 import { projectsData, type ProjectData } from "@/data/projects";
 import { profile } from "@/data/profile";
@@ -14,7 +14,6 @@ import { GlassPanels, Lamp, Shopfront } from "@/components/art/shopfront";
 import { scrollToHash } from "@/components/navigation/navbar";
 import { getLenis } from "@/lib/lenis-store";
 import { useSite } from "@/lib/site-store";
-import { stackWithIcons } from "@/lib/tech-icons";
 import { cn } from "@/lib/cn";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -115,8 +114,6 @@ export function StreetSection() {
   }, []);
 
   const p = projectsData[active];
-  const stats = p.metrics.slice(0, 3);
-  const link = p.links.live ?? p.links.github;
 
   return (
     <>
@@ -178,7 +175,7 @@ export function StreetSection() {
             <FiArrowLeft aria-hidden="true" />
           </button>
 
-          <div className="relative min-w-0 flex-1 overflow-x-clip pt-8">
+          <div className="relative -mt-12 min-w-0 flex-1 overflow-hidden pt-20 [mask-image:linear-gradient(90deg,transparent,#000_5%,#000_95%,transparent)]">
             <div
               ref={track}
               className="relative flex h-[clamp(200px,27vh,285px)] w-max items-end gap-[clamp(1rem,2.4vw,2.5rem)] pl-[clamp(1rem,2vw,2rem)] pr-[40vw] will-change-transform"
@@ -209,61 +206,6 @@ export function StreetSection() {
             <span className="mx-auto block h-6 w-[80%] bg-[radial-gradient(ellipse_at_top,rgba(10,132,255,0.25),transparent_70%)]" aria-hidden="true" />
           </div>
 
-          {/* Selected project: holds its column, but rises above the row into the open space */}
-          <div className="hidden w-[clamp(260px,22vw,330px)] shrink-0 lg:block" aria-hidden="true" />
-          <aside
-            aria-live="polite"
-            className="absolute bottom-[3vh] right-[calc(3vw+2.75rem+1.25rem)] hidden w-[clamp(260px,22vw,330px)] rounded-2xl border border-white/15 bg-white/[0.05] p-5 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.9)] backdrop-blur-md lg:block"
-          >
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/60">
-              Selected project / <span className="text-blue-400">{pad(active + 1)}</span>
-            </p>
-            <h3 key={p.id} className="display mt-3 text-[clamp(1.4rem,2vw,2rem)] text-white">
-              {p.title}
-            </h3>
-            <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-white/75">{p.tagline}</p>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {stackWithIcons(p.stack).map(({ name, Icon }) => (
-                <li key={name} className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-2.5 py-1 text-[11px] text-white">
-                  <Icon aria-hidden="true" className="size-3.5 text-blue-300" />
-                  {name}
-                </li>
-              ))}
-            </ul>
-            {stats.length > 0 && (
-              <dl className="mt-5 grid grid-cols-3 divide-x divide-white/15 border-y border-white/15 py-3">
-                {stats.map((m) => (
-                  <div key={m.label} className="flex flex-col-reverse px-2 first:pl-0">
-                    <dt className="mt-1 text-[9.5px] leading-tight text-white/60">{m.label}</dt>
-                    <dd className="font-mono text-[15px] font-semibold text-white">
-                      {m.value.toLocaleString("en-IN")}
-                      {m.suffix ?? ""}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            )}
-            <div className="mt-5 flex gap-2.5">
-              <button
-                type="button"
-                onClick={() => setOpen(p)}
-                className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-lg bg-white text-[13px] font-medium text-[#111] transition-colors hover:bg-blue-100"
-              >
-                View case study <FiArrowUpRight aria-hidden="true" />
-              </button>
-              {link && (
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex size-10 items-center justify-center rounded-lg border border-white/20 text-white transition-colors hover:border-blue-400"
-                  aria-label={`Open ${p.title}${p.links.live ? "" : " on GitHub"}`}
-                >
-                  <FiExternalLink aria-hidden="true" />
-                </a>
-              )}
-            </div>
-          </aside>
 
           <button type="button" onClick={() => goTo(active + 1)} disabled={active === N - 1} className={cn(roundBtn, "mb-[11vh] max-md:hidden")} aria-label="Next project">
             <FiArrowRight aria-hidden="true" />

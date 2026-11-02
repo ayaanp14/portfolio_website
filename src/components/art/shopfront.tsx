@@ -107,17 +107,71 @@ export function Shopfront({ project, index, active }: { project: ProjectData; in
   );
 }
 
-/** A street lantern with a cool glow */
+/**
+ * A cast-iron street lantern: finial and roof, a lit four-pane glass head,
+ * scroll brackets, a tapered fluted post and a moulded base. The light is a
+ * cool white halo with a pool of light on the pavement.
+ */
 export function Lamp() {
+  const id = useId().replace(/:/g, "");
+  const metal = `url(#lm-${id})`;
   return (
-    <div className="relative flex h-[118%] w-7 shrink-0 flex-col items-center self-end" aria-hidden="true">
-      <span className="lamp-glow absolute top-[2%] size-28 -translate-y-1/3 rounded-full bg-[radial-gradient(circle,rgba(208,236,255,0.55),rgba(124,201,255,0.18)_40%,transparent_70%)]" />
-      <span className="h-1.5 w-2 rounded-t-full bg-[#2a3140]" />
-      <span className="h-0 w-0 border-x-[11px] border-b-[7px] border-x-transparent border-b-[#2a3140]" />
-      <span className="relative h-6 w-[18px] border-x-[3px] border-[#2a3140] bg-blue-50 shadow-[0_0_18px_6px_rgba(208,236,255,0.55)]" />
-      <span className="h-1.5 w-6 bg-[#2a3140]" />
-      <span className="w-[5px] flex-1 bg-gradient-to-b from-[#2a3140] to-[#151a22]" />
-      <span className="h-2.5 w-4 rounded-t-sm bg-[#2a3140]" />
+    <div className="relative aspect-[3/20] h-[118%] shrink-0 self-end" aria-hidden="true">
+      {/* Halo around the head and light pooling on the ground */}
+      <span className="lamp-glow absolute left-1/2 top-[11%] size-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(239,248,255,0.55),rgba(124,201,255,0.2)_35%,transparent_68%)]" />
+      <span className="absolute -bottom-2 left-1/2 h-5 w-44 -translate-x-1/2 rounded-[50%] bg-[radial-gradient(ellipse,rgba(208,236,255,0.28),transparent_70%)]" />
+      <svg viewBox="0 0 60 400" className="relative block h-full w-full overflow-visible">
+        <defs>
+          {/* Cylindrical shading for the iron */}
+          <linearGradient id={`lm-${id}`} x1="0" x2="1">
+            <stop offset="0" stopColor="#0f1319" />
+            <stop offset="0.35" stopColor="#4a5566" />
+            <stop offset="0.55" stopColor="#2a3140" />
+            <stop offset="1" stopColor="#0c0f14" />
+          </linearGradient>
+          <linearGradient id={`lg-${id}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset="0.6" stopColor="#d0ecff" />
+            <stop offset="1" stopColor="#7cc9ff" />
+          </linearGradient>
+          <radialGradient id={`lc-${id}`}>
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* Finial and roof */}
+        <path d="M30 0 L32 7 L28 7 Z" fill={metal} />
+        <circle cx="30" cy="9" r="3" fill={metal} />
+        <path d="M12 24 Q30 6 48 24 Z" fill={metal} />
+        <rect x="10" y="23" width="40" height="4" rx="1.5" fill={metal} />
+
+        {/* Glass head: panes, light source, frame */}
+        <path d="M15 27 H45 L41 66 H19 Z" fill={`url(#lg-${id})`} />
+        <ellipse cx="30" cy="45" rx="9" ry="14" fill={`url(#lc-${id})`} />
+        <path d="M15 27 H45 L41 66 H19 Z M30 27 V66 M17 46 H43" fill="none" stroke="#1b212b" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M18 29 L21 63" stroke="#fff" strokeOpacity="0.7" strokeWidth="1" />
+
+        {/* Collar and neck */}
+        <path d="M17 66 H43 L37 76 H23 Z" fill={metal} />
+        <rect x="26" y="76" width="8" height="12" fill={metal} />
+        {/* Scroll brackets */}
+        <path d="M26 84 C14 84 10 74 17 70 M34 84 C46 84 50 74 43 70" fill="none" stroke="#2a3140" strokeWidth="2.6" strokeLinecap="round" />
+        <circle cx="17" cy="70" r="2" fill="#2a3140" />
+        <circle cx="43" cy="70" r="2" fill="#2a3140" />
+
+        {/* Tapered, fluted post with rings */}
+        <path d="M27 88 H33 L34.6 346 H25.4 Z" fill={metal} />
+        <path d="M30 96 V340" stroke="#6b7789" strokeOpacity="0.35" strokeWidth="0.8" />
+        <rect x="24.5" y="118" width="11" height="5" rx="1.5" fill={metal} />
+        <rect x="24" y="300" width="12" height="5" rx="1.5" fill={metal} />
+
+        {/* Moulded base */}
+        <path d="M24 346 H36 L41 368 H19 Z" fill={metal} />
+        <rect x="14" y="368" width="32" height="9" rx="1.5" fill={metal} />
+        <rect x="10" y="377" width="40" height="23" rx="2" fill={metal} />
+        <rect x="10" y="377" width="40" height="2" fill="#6b7789" fillOpacity="0.35" />
+      </svg>
     </div>
   );
 }
