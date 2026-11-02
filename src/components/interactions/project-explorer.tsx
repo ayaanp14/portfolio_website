@@ -85,7 +85,7 @@ export function ProjectExplorer({ project, onClose }: { project: ProjectData | n
               aria-hidden="true"
             />
 
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-white/85 px-6 py-4 backdrop-blur-md md:px-10">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-bg/85 px-6 py-4 backdrop-blur-md md:px-10">
               <span className="label inline-flex items-center gap-2 !text-accent">
                 <span className="pulse-dot size-1.5 rounded-full bg-accent" aria-hidden="true" />
                 {project.category}
@@ -120,17 +120,34 @@ export function ProjectExplorer({ project, onClose }: { project: ProjectData | n
                 {project.tagline}
               </motion.p>
 
+              {project.spotlight && (
+                <motion.p
+                  variants={item}
+                  className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-blue-800 bg-blue-50 px-4 py-3 text-sm text-blue-900"
+                >
+                  <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-blue-800">
+                    <span className="pulse-dot size-1.5 rounded-full bg-blue-800" aria-hidden="true" />★ Special project
+                  </span>
+                  <span className="font-medium">{project.spotlight}</span>
+                  {project.links.live && (
+                    <a href={project.links.live} target="_blank" rel="noreferrer" className="link-sweep font-mono text-[12px] text-blue-800">
+                      {host(project.links.live)} ↗
+                    </a>
+                  )}
+                </motion.p>
+              )}
+
               {/* Live screenshot in a browser frame */}
               {project.screenshot && (
-                <motion.figure variants={item} className="group mt-8 overflow-hidden rounded-xl border border-line-strong bg-paper-2">
+                <motion.figure variants={item} className="group mt-8 overflow-hidden rounded-xl border border-line-strong bg-surface">
                   <div className="flex h-9 items-center gap-3 border-b border-line px-4">
                     <span className="flex gap-1.5" aria-hidden="true">
-                      <span className="size-2.5 rounded-full bg-paper-4" />
-                      <span className="size-2.5 rounded-full bg-paper-4" />
+                      <span className="size-2.5 rounded-full bg-surface-3" />
+                      <span className="size-2.5 rounded-full bg-surface-3" />
                       <span className="size-2.5 rounded-full bg-blue-800" />
                     </span>
                     {project.links.live && (
-                      <span className="mx-auto rounded-full bg-white px-4 py-0.5 font-mono text-[10.5px] text-muted">{host(project.links.live)}</span>
+                      <span className="mx-auto rounded-full bg-bg px-4 py-0.5 font-mono text-[10.5px] text-muted">{host(project.links.live)}</span>
                     )}
                   </div>
                   <div className="relative aspect-[16/9] overflow-hidden">
@@ -172,7 +189,7 @@ export function ProjectExplorer({ project, onClose }: { project: ProjectData | n
               {project.metrics.length > 0 && (
                 <motion.dl variants={item} className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
                   {project.metrics.map((m) => (
-                    <div key={m.label} className="flex flex-col-reverse justify-end bg-white p-4 transition-colors duration-300 hover:bg-paper-2">
+                    <div key={m.label} className="flex flex-col-reverse justify-end bg-bg p-4 transition-colors duration-300 hover:bg-surface">
                       <dt className="label mt-2 text-[10px] leading-snug">{m.label}</dt>
                       <dd className="display text-[clamp(1.25rem,2.2vw,1.6rem)] text-ink">
                         <CountUp to={m.value} suffix={m.suffix ?? ""} />

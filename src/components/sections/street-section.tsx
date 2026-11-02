@@ -90,7 +90,19 @@ export function StreetSection() {
         .to(q("[data-parallax-sky]"), { x: () => -distance() * 0.1, duration: 1 }, 0)
         .to({}, { duration: 0.15 });
     }, el);
-    return () => ctx.revert();
+
+    // Re-measure whenever the row of shops changes size (fonts, images, a new project)
+    let width = tr.offsetWidth;
+    const ro = new ResizeObserver(() => {
+      if (tr.offsetWidth === width) return;
+      width = tr.offsetWidth;
+      ScrollTrigger.refresh();
+    });
+    ro.observe(tr);
+    return () => {
+      ro.disconnect();
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -108,10 +120,10 @@ export function StreetSection() {
           <span className="absolute right-[3vw] top-[13vh] size-[clamp(3.5rem,6vw,5.5rem)] rounded-full bg-blue-800">
             <span className="ping-ring absolute inset-0 rounded-full border-2 border-blue-300 [animation-duration:4s]" />
           </span>
-          <span className="cloud absolute left-[3vw] top-[30vh] h-5 w-48 rounded-full bg-paper-3">
-            <span className="absolute -top-5 left-10 h-10 w-20 rounded-full bg-paper-3" />
+          <span className="cloud absolute left-[3vw] top-[30vh] h-5 w-48 rounded-full bg-surface-2">
+            <span className="absolute -top-5 left-10 h-10 w-20 rounded-full bg-surface-2" />
           </span>
-          <span className="cloud absolute left-[62vw] top-[10vh] h-4 w-32 rounded-full bg-paper-2 [animation-delay:-6s]" />
+          <span className="cloud absolute left-[62vw] top-[10vh] h-4 w-32 rounded-full bg-surface [animation-delay:-6s]" />
         </div>
 
         {/* Heading */}
@@ -132,8 +144,8 @@ export function StreetSection() {
         {/* Back buildings */}
         <div data-parallax-back className="pointer-events-none absolute bottom-[11vh] left-0 flex items-end gap-3" aria-hidden="true">
           {[...BACK_BLOCKS, ...BACK_BLOCKS].map(([w, h], i) => (
-            <span key={i} className="block bg-paper-2" style={{ width: `${w}vw`, height: `${h * 0.55}vh` }}>
-              <span className="mx-[18%] mt-[14%] block h-[30%] bg-[repeating-linear-gradient(90deg,#e4e4e4_0_10px,transparent_10px_22px)]" />
+            <span key={i} className="block bg-surface" style={{ width: `${w}vw`, height: `${h * 0.55}vh` }}>
+              <span className="mx-[18%] mt-[14%] block h-[30%] bg-[repeating-linear-gradient(90deg,var(--surface-3)_0_10px,transparent_10px_22px)]" />
             </span>
           ))}
         </div>
@@ -141,7 +153,7 @@ export function StreetSection() {
         {/* The shops */}
         <div
           ref={track}
-          className="absolute bottom-[11vh] left-0 z-10 flex h-[clamp(300px,47vh,460px)] items-end gap-[clamp(1.5rem,4vw,4rem)] pl-[4vw] pr-[30vw] will-change-transform"
+          className="absolute bottom-[11vh] left-0 z-10 flex h-[clamp(300px,47vh,460px)] w-max items-end gap-[clamp(1.5rem,4vw,4rem)] pl-[4vw] pr-[30vw] will-change-transform"
         >
           {projectsData.map((p, i) => (
             <Fragment key={p.id}>
@@ -179,8 +191,8 @@ export function StreetSection() {
         </div>
 
         {/* Road */}
-        <div className="absolute inset-x-0 bottom-0 z-10 h-[11vh] border-t-[3px] border-ink-light bg-paper-3" aria-hidden="true">
-          <div className="absolute inset-x-0 top-1/2 h-[3px] bg-[repeating-linear-gradient(90deg,#ffffff_0_32px,transparent_32px_92px)]" />
+        <div className="absolute inset-x-0 bottom-0 z-10 h-[11vh] border-t-[3px] border-ink bg-surface-2" aria-hidden="true">
+          <div className="absolute inset-x-0 top-1/2 h-[3px] bg-[repeating-linear-gradient(90deg,var(--bg)_0_32px,transparent_32px_92px)]" />
           <Car />
         </div>
 

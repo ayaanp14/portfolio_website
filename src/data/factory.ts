@@ -48,7 +48,7 @@ export const factoryModules: FactoryModule[] = [
       "High-concurrency, asynchronous code execution engine",
       "Led the Viasocket plugin module migration from frontend to backend",
     ],
-    projects: ["CodingInfoBot", "CodeKairo", "TrueHostel", "Viasocket"],
+    projects: ["CodingInfoBot", "CodeKairo", "TrueHostel", "VertoWork", "Keel", "Viasocket"],
   },
   {
     id: "database",
@@ -61,9 +61,10 @@ export const factoryModules: FactoryModule[] = [
     capabilities: [
       "End-to-end schema design for a hostel management SaaS",
       "Workspace-scoped documents for tenant isolation",
-      "Persistent QR metadata for retrieval and analytics",
+      "55-model Prisma schema on MySQL for a freelance marketplace, migrated from MongoDB",
+      "Transactional stock reservations with row locks and an append-only ledger",
     ],
-    projects: ["TrueHostel", "CodingInfoBot", "Qrify"],
+    projects: ["TrueHostel", "CodingInfoBot", "VertoWork", "Keel"],
   },
   {
     id: "api",
@@ -77,9 +78,9 @@ export const factoryModules: FactoryModule[] = [
       "17+ zod-validated route groups in a multi-tenant API",
       "JWT + OTP auth with progressive rate-limit cooldowns",
       "REST API optimisation across Viasocket data flows",
-      "Generation, decoding and URL shortening behind one API",
+      "32 route groups behind a marketplace — jobs, payments, chat and disputes",
     ],
-    projects: ["CodingInfoBot", "CodeKairo", "Viasocket", "Qrify"],
+    projects: ["CodingInfoBot", "CodeKairo", "Viasocket", "VertoWork"],
   },
   {
     id: "cloud",
@@ -93,8 +94,9 @@ export const factoryModules: FactoryModule[] = [
       "TrueHostel and CodingInfoBot running in production on Azure",
       "Health and readiness endpoints for rolling deploys",
       "Frontend on Static Web Apps, APIs on App Service",
+      "Keel live on Railway with a public demo",
     ],
-    projects: ["TrueHostel", "CodingInfoBot"],
+    projects: ["TrueHostel", "CodingInfoBot", "Keel"],
   },
   {
     id: "automation",
@@ -107,9 +109,10 @@ export const factoryModules: FactoryModule[] = [
     capabilities: [
       "CI/CD pipelines that cut manual release effort and deploy errors",
       "Cron-scheduled email campaigns with per-sender daily limits",
+      "Retryable marketplace sync jobs with backoff and a dead-letter queue",
       "Automated evaluation of thousands of submission test cases",
       "API testing and documentation workflows",
     ],
-    projects: ["TrueHostel", "CodingInfoBot", "CodeKairo"],
+    projects: ["TrueHostel", "CodingInfoBot", "CodeKairo", "Keel"],
   },
 ];

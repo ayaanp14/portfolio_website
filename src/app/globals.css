@@ -29,9 +29,23 @@
   --state-error: #b91c1c;
 }
 
-/* Light (FRONT) token set */
+/*
+ * Four palettes — every section is a FRONT side, a BACK side, or neutral:
+ *
+ *               FRONT (what people see)    BACK (what makes it work)
+ *   DAY         white                      pale blueprint blue
+ *   NIGHT       charcoal                   black
+ *
+ * The page theme is html[data-theme]. `.tone-front` / `.tone-back` pick a
+ * side's palette without painting a background (the navbar over a section);
+ * `.tone-light` / `.tone-dark` force a tone regardless of theme.
+ */
+
+/* DAY · FRONT */
 :root,
-.side-front,
+[data-theme="light"],
+[data-theme="light"] .side-front,
+[data-theme="light"] .tone-front,
 .tone-light {
   --bg: #ffffff;
   --ink: #111111;
@@ -45,12 +59,33 @@
   --code-string: var(--blue-800);
   --code-property: var(--blue-950);
   --code-comment: #6b6b6b;
+  --stage-glow: rgba(0, 104, 204, 0.22);
   color-scheme: light;
 }
 
-/* Dark (BACK) token set */
+/* DAY · BACK — blueprint paper */
+[data-theme="light"] .side-back,
+[data-theme="light"] .tone-back {
+  --bg: #edf3fa;
+  --ink: #0c1522;
+  --surface: #e2eaf4;
+  --surface-2: #d5e0ed;
+  --surface-3: #c4d3e4;
+  --accent: var(--blue-800);
+  --highlight: var(--blue-900);
+  --code-bg: #e2eaf4;
+  --code-keyword: var(--blue-900);
+  --code-string: var(--blue-800);
+  --code-property: var(--blue-950);
+  --code-comment: #5b6878;
+  --stage-glow: rgba(0, 104, 204, 0.22);
+  color-scheme: light;
+}
+
+/* NIGHT · BACK */
 [data-theme="dark"],
-.side-back,
+[data-theme="dark"] .side-back,
+[data-theme="dark"] .tone-back,
 .tone-dark {
   --bg: #0a0a0a;
   --ink: #f5f5f5;
@@ -64,12 +99,31 @@
   --code-string: var(--blue-400);
   --code-property: var(--blue-200);
   --code-comment: #8a8a8a;
+  --stage-glow: rgba(0, 59, 117, 0.85);
   color-scheme: dark;
 }
 
-/* The light sides stay light even when the page theme is dark */
+/* NIGHT · FRONT — charcoal */
 [data-theme="dark"] .side-front,
-[data-theme="dark"] .tone-light {
+[data-theme="dark"] .tone-front {
+  --bg: #15171b;
+  --ink: #f2f4f7;
+  --surface: #1c1f24;
+  --surface-2: #23272d;
+  --surface-3: #2d3239;
+  --accent: var(--blue-400);
+  --highlight: var(--blue-300);
+  --code-bg: #1c1f24;
+  --code-keyword: var(--blue-300);
+  --code-string: var(--blue-400);
+  --code-property: var(--blue-200);
+  --code-comment: #8a8f98;
+  --stage-glow: rgba(0, 59, 117, 0.85);
+  color-scheme: dark;
+}
+
+/* Forced tones win over the theme */
+[data-theme] .tone-light {
   --bg: #ffffff;
   --ink: #111111;
   --surface: #f4f4f4;
@@ -79,12 +133,24 @@
   --highlight: var(--blue-900);
   color-scheme: light;
 }
+[data-theme] .tone-dark {
+  --bg: #0a0a0a;
+  --ink: #f5f5f5;
+  --surface: #111111;
+  --surface-2: #181818;
+  --surface-3: #222222;
+  --accent: var(--blue-400);
+  --highlight: var(--blue-300);
+  color-scheme: dark;
+}
 
 /* Derived tokens are re-declared wherever --ink/--bg change */
 :root,
 [data-theme],
 .side-front,
 .side-back,
+.tone-front,
+.tone-back,
 .tone-light,
 .tone-dark {
   --muted: color-mix(in srgb, var(--ink) 64%, var(--bg));
@@ -100,6 +166,8 @@
 
 .side-front,
 .side-back,
+.tone-front,
+.tone-back,
 .tone-light,
 .tone-dark {
   color: var(--ink);
@@ -108,6 +176,16 @@
 .side-front,
 .side-back {
   background-color: var(--bg);
+}
+
+/* Day ↔ night fades instead of snapping */
+html,
+body,
+.side-front,
+.side-back,
+.tone-light,
+.tone-dark {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
 }
 
 @theme inline {
@@ -506,6 +584,82 @@ html.lenis body {
   }
 }
 
+/* ------------------------------------------------------------------ */
+/* Factory crates: a raw dashed box until the press stamps it, then a   */
+/* finished product card. `.is-done` is toggled by the factory section. */
+/* ------------------------------------------------------------------ */
+
+/* On impact the raw box blows outward and fades as the card settles in */
+.crate__raw,
+.crate__done {
+  transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1), transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.crate__done {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.crate.is-done .crate__raw {
+  opacity: 0;
+  transform: scale(1.08);
+}
+.crate.is-done .crate__done {
+  opacity: 1;
+  transform: none;
+}
+.crate.is-done:hover .crate__done {
+  transform: translateY(-6px);
+}
+
+/* Press and belt hardware, turned by the belt's travel (--spin, set per frame) */
+.press-wheel {
+  rotate: calc(var(--spin, 0) * -2deg);
+}
+.belt-roller {
+  rotate: calc(var(--spin, 0) * 1deg);
+}
+@keyframes press-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0.15; }
+}
+.press-light {
+  animation: press-blink 1.4s steps(1) infinite;
+}
+/* Sparks thrown off when the press finishes the core module */
+.factory-spark {
+  position: absolute;
+  z-index: 4;
+  width: 11px;
+  height: 12px;
+  margin: -6px;
+  background: var(--accent);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  pointer-events: none;
+}
+@keyframes stamp-in {
+  0% { opacity: 0; transform: rotate(-10deg) scale(1.7); }
+  100% { opacity: 1; transform: rotate(-10deg) scale(1); }
+}
+.crate__stamp {
+  opacity: 0;
+  transform: rotate(-10deg);
+}
+.crate.is-done .crate__stamp {
+  animation: stamp-in 0.35s cubic-bezier(0.2, 1.6, 0.4, 1) 0.1s both;
+}
+/* Tape across the top of a finished crate */
+.crate__tape--shipped {
+  background: repeating-linear-gradient(-45deg, var(--blue-800) 0 14px, var(--blue-900) 14px 28px);
+}
+.crate__tape--core {
+  background: repeating-linear-gradient(-45deg, var(--blue-400) 0 14px, #0f1720 14px 28px);
+}
+.crate__tape--tool {
+  background: repeating-linear-gradient(-45deg, #2a2f37 0 14px, #12151a 14px 28px);
+}
+.crate--core.is-done .crate__done {
+  box-shadow: 0 0 0 2px var(--blue-400), 0 0 48px -6px var(--blue-400);
+}
+
 /* "Scroll sideways" arrow nudging right */
 @keyframes drift-x {
   0%, 100% { transform: translateX(0); }
@@ -712,10 +866,13 @@ html.lenis body {
     scroll-behavior: auto !important;
   }
   .float-y, .twinkle, .shimmer, .type-bar, .cursor-path, .cta-press, .cta-ripple, .toggle-track, .toggle-knob,
-  .swatch-pop, .weight-heavy, .weight-light, .shimmer::after, .flow, .led, .ping-ring, .lamp-glow, .drive, .drift-x, .flicker, .rise-in, .sketch, .spin {
+  .swatch-pop, .weight-heavy, .weight-light, .shimmer::after, .flow, .led, .ping-ring, .lamp-glow, .drive, .drift-x, .flicker, .rise-in, .sketch, .spin, .press-light, .crate.is-done .crate__stamp {
     animation: none !important;
   }
   .flow, .ping-ring, .cta-ripple, .drive, .shimmer::after {
     visibility: hidden;
+  }
+  .crate.is-done .crate__stamp {
+    opacity: 1;
   }
 }

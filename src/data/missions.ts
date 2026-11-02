@@ -19,7 +19,7 @@ export const missions: Mission[] = [
     description:
       "Full products built end-to-end: data model, secure APIs, a usable interface and an automated deploy. TrueHostel went from an empty repo to truehostel.in this way.",
     loadout: ["React", "Next.js", "Node.js", "Express", "MongoDB", "Azure"],
-    projects: ["truehostel", "codinginfobot"],
+    projects: ["truehostel", "codinginfobot", "vertowork"],
   },
   {
     id: "backend-api",
@@ -29,7 +29,7 @@ export const missions: Mission[] = [
     description:
       "Validated REST APIs, stateless auth, rate limiting and realtime channels. Tenancy and security are designed in from the first route, not bolted on.",
     loadout: ["Node.js", "Express 5", "Zod", "JWT", "Socket.IO", "BullMQ"],
-    projects: ["codinginfobot", "codekairo", "qrify"],
+    projects: ["codinginfobot", "vertowork", "keel", "codekairo"],
   },
   {
     id: "database",
@@ -39,7 +39,7 @@ export const missions: Mission[] = [
     description:
       "Choosing between document and relational stores, modelling tenants and records, and keeping queries lean as data grows.",
     loadout: ["MongoDB", "PostgreSQL", "MySQL", "Prisma ORM"],
-    projects: ["truehostel", "qrify"],
+    projects: ["truehostel", "vertowork", "keel"],
   },
   {
     id: "product",

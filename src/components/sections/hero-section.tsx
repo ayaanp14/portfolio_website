@@ -189,13 +189,13 @@ export function HeroSection() {
       data-tone-right="dark"
       data-header-fade="off"
       aria-label="Index — Ayaan Pathan, the developer who builds both sides"
-      className="relative h-[100svh] min-h-[560px] overflow-hidden bg-night"
+      className="relative h-[100svh] min-h-[560px] overflow-hidden bg-bg"
     >
       <h1 className="sr-only">Ayaan Pathan — Software Developer, Product Builder, Full Stack Engineer</h1>
 
       {/* Stage revealed between the halves */}
       <div data-stage-bg className="side-back dot-grid absolute inset-x-0 -bottom-[8%] top-0 will-change-transform" aria-hidden="true">
-        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[radial-gradient(ellipse_at_50%_100%,rgba(0,59,117,0.85),transparent_65%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[radial-gradient(ellipse_at_50%_100%,var(--stage-glow),transparent_65%)]" />
       </div>
       {/* 3D orbit behind the developer, revealed as the halves part */}
       <LazyOrbitScene variant="hero" className="absolute inset-0" />
@@ -214,7 +214,7 @@ export function HeroSection() {
         <div className="absolute left-0 top-1/2 origin-left" style={{ transform: "translateY(-50%) scale(var(--art,1))" }}>
           <FrontArtboard />
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-[7vh] bg-paper-3" aria-hidden="true" />
+        <div className="absolute inset-x-0 bottom-0 h-[7vh] bg-surface-2" aria-hidden="true" />
         <div className="absolute right-[3.5vw] top-[12vh] text-right">
           <p data-beat1 className="display overflow-hidden pb-[0.08em] text-[clamp(1.25rem,3.3vw,3rem)]">
             <span data-intro-line className="block">
@@ -226,7 +226,7 @@ export function HeroSection() {
           </p>
           <span data-intro-rule className="ml-auto mt-5 block h-px w-32 origin-right bg-line-strong" />
         </div>
-        <div data-final className="absolute bottom-[9vh] left-[3vw] z-10 hidden max-w-[25vw] rounded-xl border border-line bg-white/95 p-6 backdrop-blur lg:block">
+        <div data-final className="absolute bottom-[9vh] left-[3vw] z-10 hidden max-w-[25vw] rounded-xl border border-line bg-bg/95 p-6 backdrop-blur lg:block">
           <p className="text-[15px] leading-relaxed text-muted">
             I build scalable applications, developer tools, and digital products through engineering and creativity.
           </p>
@@ -234,7 +234,7 @@ export function HeroSection() {
             <a href="#street" className="pill pill-accent">
               Explore my work <FiArrowDown aria-hidden="true" />
             </a>
-            <a href="#contact" className="pill pill-outline bg-white">
+            <a href="#contact" className="pill pill-outline bg-bg">
               Get in touch <FiArrowUpRight aria-hidden="true" />
             </a>
           </div>
@@ -246,7 +246,7 @@ export function HeroSection() {
         <div className="absolute right-0 top-1/2 origin-right" style={{ transform: "translateY(-50%) scale(var(--art,1))" }}>
           <BackArtboard ref={terminal} />
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-[7vh] bg-night-3" aria-hidden="true" />
+        <div className="absolute inset-x-0 bottom-0 h-[7vh] bg-surface-2" aria-hidden="true" />
         <div className="absolute left-[3.5vw] top-[12vh]">
           <p data-beat1 className="display overflow-hidden pb-[0.08em] text-[clamp(1.25rem,3.3vw,3rem)]">
             <span data-intro-line className="block">
@@ -258,7 +258,7 @@ export function HeroSection() {
           </p>
           <span data-intro-rule className="mt-5 block h-px w-32 origin-left bg-line-strong" />
         </div>
-        <div data-final className="absolute bottom-[9vh] right-[4vw] z-10 hidden flex-col items-end gap-4 rounded-xl border border-line bg-night-2/95 p-6 backdrop-blur lg:flex">
+        <div data-final className="absolute bottom-[9vh] right-[4vw] z-10 hidden flex-col items-end gap-4 rounded-xl border border-line bg-surface/95 p-6 backdrop-blur lg:flex">
           <span className="label inline-flex items-center gap-2 text-ink">
             <FiMapPin aria-hidden="true" className="text-accent" /> {profile.location}
           </span>
@@ -296,15 +296,16 @@ export function HeroSection() {
       </div>
 
       {/* FRONT vs BACK badge */}
-      <div data-badge className="absolute left-1/2 top-[54%] z-30 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
-        <div className="flex items-center">
-          <span data-badge-front className="display rounded-l-full bg-paper-3 py-3 pl-8 pr-14 text-[clamp(1rem,3.4vw,3rem)] text-blue-800 max-md:pl-4 max-md:pr-9">Front</span>
+      <div data-badge className="absolute left-1/2 top-[54%] z-30 flex w-max -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+        {/* Equal outer columns keep the vs disc on the page's centre line */}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+          <span data-badge-front className="display rounded-l-full text-right bg-paper-3 py-3 pl-8 pr-14 text-[clamp(1rem,3.4vw,3rem)] text-blue-800 max-md:pl-4 max-md:pr-9">Front</span>
           <span data-badge-vs className="relative z-10 -mx-8 flex size-[clamp(3.2rem,6vw,5.4rem)] items-center justify-center rounded-full bg-blue-800 font-mono text-[clamp(.8rem,1.4vw,1.25rem)] text-white max-md:-mx-6">
             <span className="ping-ring absolute inset-0 rounded-full border-2 border-blue-400" aria-hidden="true" />
             <span className="ping-ring absolute inset-0 rounded-full border-2 border-blue-400 [animation-delay:1.2s]" aria-hidden="true" />
             vs
           </span>
-          <span data-badge-back className="display rounded-r-full bg-night-3 py-3 pl-14 pr-8 text-[clamp(1rem,3.4vw,3rem)] text-blue-400 max-md:pl-9 max-md:pr-4">Back</span>
+          <span data-badge-back className="display rounded-r-full text-left bg-night-3 py-3 pl-14 pr-8 text-[clamp(1rem,3.4vw,3rem)] text-blue-400 max-md:pl-9 max-md:pr-4">Back</span>
         </div>
         <div data-badge-cta className="mt-8">
           <button type="button" onClick={advance} className="pill pill-accent">

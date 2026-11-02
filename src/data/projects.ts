@@ -4,7 +4,7 @@ export type ProjectMetric = {
   suffix?: string;
 };
 
-export type HologramKind = "occupancy" | "chat" | "editor" | "qr";
+export type HologramKind = "occupancy" | "chat" | "editor" | "marketplace" | "inventory";
 
 export type ProjectData = {
   id: string;
@@ -33,6 +33,8 @@ export type ProjectData = {
   category: string;
   /** Screenshot of the live product, shown in the shop window */
   screenshot?: string;
+  /** Marks a standout project: shown as a ribbon on its shop and a callout in its case study */
+  spotlight?: string;
 };
 
 export const projectsData: ProjectData[] = [
@@ -118,9 +120,10 @@ export const projectsData: ProjectData[] = [
     category: "Coding platform",
     screenshot: "/projects/codekairo.png",
     title: "CodeKairo",
+    spotlight: "My personal project — built, hosted and live",
     tagline: "Competitive Coding & Bug-Hunting Platform",
     description:
-      "A full-stack competitive coding platform with a high-concurrency code execution engine, real-time pair programming, and a gamification system designed to keep developers coming back.",
+      "My own personal project, designed, built and hosted by me and live at codekairo.com: a full-stack competitive coding platform with a high-concurrency code execution engine, real-time pair programming, and a gamification system designed to keep developers coming back.",
     role: "Creator & Full-Stack Developer",
     duration: "Personal Project",
     stack: ["React", "Node.js", "Socket.IO", "Judge0", "Monaco Editor", "Material UI"],
@@ -149,45 +152,83 @@ export const projectsData: ProjectData[] = [
       architecture:
         "I built a high-concurrency execution engine on Judge0 with asynchronous processing to handle thousands of test cases efficiently. Pair Mode uses Socket.IO and Monaco Editor for live code sync, shared cursors, and shared execution. Authentication is stateless — JWT + OTP + rate limiting with progressive cooldowns to prevent abuse.",
       results:
-        "The platform executes thousands of test cases without breaking a sweat, and Pair Mode delivers true real-time collaboration. A gamification layer — XP, streaks, and analytics dashboards — measurably increased user engagement and retention, wrapped in a polished Material UI, Tailwind, and Framer Motion interface.",
+        "Hosted and live at codekairo.com. The platform executes thousands of test cases without breaking a sweat, and Pair Mode delivers true real-time collaboration. A gamification layer — XP, streaks, and analytics dashboards — measurably increased user engagement and retention, wrapped in a polished Material UI, Tailwind, and Framer Motion interface.",
     },
     image:
       "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=2000&h=1200",
   },
   {
-    id: "qrify",
-    category: "Full-stack app",
-    title: "Qrify",
-    tagline: "QR Code Generator & Decoder",
+    id: "vertowork",
+    category: "Marketplace",
+    screenshot: "/projects/vertowork.png",
+    title: "VertoWork",
+    tagline: "Freelance Marketplace & Time Tracker",
     description:
-      "A full-stack web application to generate and decode QR codes with metadata tracking. Every generated code is stored in MySQL for retrieval and analytics, with URL shortening built in.",
-    role: "Creator & Full-Stack Developer",
-    duration: "Personal Project",
-    stack: ["Node.js", "Express", "REST APIs", "MySQL"],
+      "A full freelance marketplace: clients post jobs and hire, freelancers bid and get paid through milestones or hourly contracts, and a companion desktop app tracks billable time. Web app, API and desktop tracker built as one product.",
+    role: "Full-Stack Developer",
+    duration: "2026",
+    stack: ["React 19", "Express 5", "Prisma", "MySQL", "Socket.IO", "Razorpay", "Electron"],
     features: [
-      "Text-to-QR generation",
-      "Image upload QR decoding",
-      "Built-in URL shortening",
-      "MySQL metadata tracking",
+      "Jobs, proposals & bidding",
+      "Milestone payments & wallet",
+      "Hourly contracts with Work Diary",
+      "Electron desktop time tracker",
+      "Realtime chat & scheduled calls",
+      "Agencies, disputes & admin",
     ],
-    hologram: "qr",
-    links: {
-      github: "https://github.com/ayaanp14",
-    },
+    hologram: "marketplace",
+    links: {},
     metrics: [
-      { label: "Core Features", value: 3 },
-      { label: "Metadata Tracked", value: 100, suffix: "%" },
-      { label: "Full-Stack Build", value: 100, suffix: "%" },
+      { label: "Database Models", value: 55 },
+      { label: "API Route Groups", value: 32 },
+      { label: "Server-Rendered Pages", value: 72 },
+      { label: "Apps: Web + Desktop", value: 2 },
     ],
     caseStudy: {
       problem:
-        "Most QR tools are one-shot: generate a code and lose all context. There was no lightweight way to generate, decode, and track QR codes with their metadata in one place.",
+        "A freelance marketplace has to get money and trust right: clients need proof of work before paying, freelancers need to be paid for the hours they actually put in, and both sides need a fair way out when a contract goes wrong — all while the job pages stay fast and findable in search.",
       architecture:
-        "I built a REST API with Node.js and Express supporting text-to-QR generation, image upload for QR decoding, and URL shortening. Every code's metadata is persisted in MySQL for tracking and retrieval.",
+        "One Node process serves everything: an Express 5 API split into 32 route groups, server-rendered React 19 pages (Vite + React Router, with per-page metadata and JSON-LD for SEO), Socket.IO for chat, and user uploads. Data lives in MySQL behind a 55-model Prisma schema, migrated from MongoDB with dedicated migration scripts. Auth.js handles Firebase email and Google, Facebook, GitHub and credential sign-in. Payments run through Razorpay into wallets, milestones and withdrawals. For hourly contracts, an Electron desktop tracker counts time in 10-minute blocks with a random screenshot and per-minute activity counts in each, stops on idle, sleep or the weekly limit, works offline, and signs in through the browser with PKCE.",
       results:
-        "A complete full-stack app where every generated code is traceable — generation, decoding, and shortening all flow through one API with a persistent metadata store.",
+        "A complete marketplace — jobs, proposals, milestone and hourly contracts, wallet and withdrawals, chat, scheduled calls, agencies, disputes and an admin panel — across 72 server-rendered pages. Hourly work is billed from the same 10-minute blocks the freelancer tracks and the client reviews in the Work Diary, and any block the freelancer deletes is never billed.",
     },
-    image:
-      "https://images.unsplash.com/photo-1595079676339-1534801ad6cf?auto=format&fit=crop&q=80&w=2000&h=1200",
+  },
+  {
+    id: "keel",
+    category: "Inventory SaaS",
+    screenshot: "/projects/keel.png",
+    title: "Keel",
+    tagline: "Multi-Marketplace Inventory Management",
+    description:
+      "A multi-tenant inventory SaaS for sellers who list the same products on Amazon, Flipkart, Shopify, Wix and eBay. MySQL is the single source of truth: a sale on any marketplace reserves stock in one transaction, and background workers push the new quantity to every other channel.",
+    role: "Full-Stack Developer",
+    duration: "2026",
+    stack: ["React", "Express", "Prisma", "MySQL", "BullMQ", "Redis", "Zod", "Railway"],
+    features: [
+      "One central stock ledger per SKU",
+      "Amazon, Flipkart, Shopify, Wix & eBay adapters",
+      "Transactional reservations, no overselling",
+      "Queued, retryable channel sync",
+      "Per-marketplace listing validation",
+      "RBAC, tenant isolation & encrypted credentials",
+    ],
+    hologram: "inventory",
+    links: {
+      live: "https://inventoryfrontend-production-e7e3.up.railway.app",
+    },
+    metrics: [
+      { label: "Marketplaces", value: 5 },
+      { label: "Database Models", value: 37 },
+      { label: "Test Files", value: 28 },
+      { label: "User Roles", value: 5 },
+    ],
+    caseStudy: {
+      problem:
+        "Sellers who list the same stock on several marketplaces keep a separate count on each one. A sale on Amazon doesn't change the number on Flipkart or Shopify, so the same last unit gets sold twice — and every marketplace has its own API, listing rules and way of reporting orders.",
+      architecture:
+        "An Express API over a 37-model Prisma schema on MySQL, which holds every SKU, warehouse, reservation and order; marketplaces only mirror it. Incoming orders (signed webhooks, or polling for eBay) are imported idempotently and reserve stock with row locks inside one transaction, and every change is an append-only ledger entry. BullMQ workers on Redis then push one coalesced update per channel, with exponential backoff, rate-limit-aware retries, a dead-letter queue and a reconciliation job. Each marketplace plugs into one adapter contract that validates its listing rules before anything is sent, with mock adapters for local testing. Security covers argon2id passwords, short-lived JWTs with rotating refresh cookies and reuse detection, five-role RBAC, tenant isolation and AES-256-GCM encryption for marketplace credentials.",
+      results:
+        "Live on Railway with a working demo. A sale on any channel updates central stock and every other marketplace from a single source of truth; a channel whose listing is missing required fields is held back with the missing fields listed, and sync health — logs, failed-job retries, queue depth — is visible in the app.",
+    },
   },
 ];

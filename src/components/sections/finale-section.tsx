@@ -23,11 +23,11 @@ const CITY = [
 
 function CityBlock({ w, h, x }: { w: number; h: number; x: number }) {
   return (
-    <div className="absolute bottom-0 grid grid-cols-3 content-start gap-[0.7vw] bg-paper-3 p-[1.1vw]" style={{ left: `${x}%`, width: `${w}%`, height: `${h}vh` }}>
+    <div className="absolute bottom-0 grid grid-cols-3 content-start gap-[0.7vw] bg-surface-2 p-[1.1vw]" style={{ left: `${x}%`, width: `${w}%`, height: `${h}vh` }}>
       {Array.from({ length: Math.floor(h / 5) * 3 }, (_, i) => (
         <span
           key={i}
-          className={(i * 5 + x) % 11 === 0 ? "flicker aspect-square bg-blue-800" : "aspect-square bg-white"}
+          className={(i * 5 + x) % 11 === 0 ? "flicker aspect-square bg-blue-800" : "aspect-square bg-bg"}
           style={(i * 5 + x) % 11 === 0 ? { animationDelay: `${-((i + x) % 9) * 0.7}s` } : undefined}
         />
       ))}
@@ -75,8 +75,8 @@ export function FinaleSection() {
       <section id="contact" ref={root} data-tone-left="light" data-tone-right="dark" aria-label="06 — Let's build something: contact" className="relative h-[100svh] min-h-[620px] overflow-hidden">
         {/* FRONT half — city */}
         <div className="side-front absolute inset-y-0 left-0 w-1/2 overflow-hidden" aria-hidden="true">
-          <span className="cloud absolute left-[8%] top-[20vh] h-5 w-44 rounded-full bg-paper-3" />
-          <span className="cloud absolute left-[46%] top-[8vh] h-4 w-36 rounded-full bg-paper-2 [animation-delay:-5s]" />
+          <span className="cloud absolute left-[8%] top-[20vh] h-5 w-44 rounded-full bg-surface-2" />
+          <span className="cloud absolute left-[46%] top-[8vh] h-4 w-36 rounded-full bg-surface [animation-delay:-5s]" />
           <span data-sun className="absolute bottom-[22vh] right-[14%] size-[clamp(9rem,15vw,15rem)] translate-y-1/3 rounded-full bg-blue-800" />
           <div className="absolute inset-x-0 bottom-[22vh] h-[40vh]">
             {CITY.map((b) => (
@@ -84,7 +84,7 @@ export function FinaleSection() {
             ))}
             <CityBlock x={64} w={11} h={22} />
           </div>
-          <div className="absolute inset-x-0 bottom-0 h-[22vh] border-t-[3px] border-ink-light bg-paper-3" />
+          <div className="absolute inset-x-0 bottom-0 h-[22vh] border-t-[3px] border-ink bg-surface-2" />
         </div>
 
         {/* BACK half — industry */}
@@ -94,30 +94,30 @@ export function FinaleSection() {
           ].map(([x, y], i) => (
             <span
               key={`${x}${y}`}
-              className="twinkle absolute size-[3px] rounded-full bg-paper-4/70"
+              className="twinkle absolute size-[3px] rounded-full bg-ink/50"
               style={{ left: `${x}%`, top: `${y}vh`, animationDelay: `${-i * 0.6}s` }}
             />
           ))}
           <svg className="absolute inset-x-0 bottom-[22vh] h-[12vh] w-full" viewBox="0 0 600 100" preserveAspectRatio="none">
-            <path d="M0 100 L0 60 L70 20 L70 60 L140 20 L140 60 L210 20 L210 60 L280 20 L280 60 L350 20 L350 60 L420 20 L420 60 L490 20 L490 60 L560 20 L560 60 L600 40 L600 100 Z" fill="#181818" />
+            <path d="M0 100 L0 60 L70 20 L70 60 L140 20 L140 60 L210 20 L210 60 L280 20 L280 60 L350 20 L350 60 L420 20 L420 60 L490 20 L490 60 L560 20 L560 60 L600 40 L600 100 Z" className="fill-surface-2" />
           </svg>
           {[
             { x: 62, h: 30, cap: "bg-blue-400" },
             { x: 82, h: 22, cap: "bg-blue-800" },
           ].map((c, i) => (
-            <div key={c.x} className="absolute bottom-[22vh] w-[4.5%] min-w-6 bg-night-3" style={{ left: `${c.x}%`, height: `${c.h}vh` }}>
+            <div key={c.x} className="absolute bottom-[22vh] w-[4.5%] min-w-6 bg-surface-2" style={{ left: `${c.x}%`, height: `${c.h}vh` }}>
               <span className={`absolute inset-x-0 top-0 h-2 ${c.cap}`} />
               {[0, 1, 2].map((s) => (
                 <span
                   key={s}
-                  className="smoke absolute -top-8 left-0 size-10 rounded-full bg-night-4"
+                  className="smoke absolute -top-8 left-0 size-10 rounded-full bg-surface-3"
                   style={{ animationDelay: `${-(s * 2 + i)}s` }}
                 />
               ))}
             </div>
           ))}
           <div className="absolute inset-x-0 bottom-[22vh] h-2 bg-[repeating-linear-gradient(90deg,var(--blue-950)_0_26px,transparent_26px_60px)]" />
-          <div className="absolute inset-x-0 bottom-0 h-[22vh] border-t-[3px] border-[#3a3a3a] bg-night-3" />
+          <div className="absolute inset-x-0 bottom-0 h-[22vh] border-t-[3px] border-line-strong bg-surface-2" />
         </div>
 
         {/* Headline */}

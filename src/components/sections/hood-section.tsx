@@ -113,7 +113,7 @@ export function HoodSection() {
 
           {/* Player card */}
           <Reveal className="lg:col-span-7">
-            <article data-tilt="3" className="tone-light overflow-hidden rounded-xl border border-line bg-surface">
+            <article data-tilt="3" className="overflow-hidden rounded-xl border border-line bg-surface">
               <div className="h-2.5 bg-[repeating-linear-gradient(-45deg,var(--blue-800)_0_8px,var(--blue-900)_8px_16px)]" />
               <div className="p-6 md:p-10">
                 <div className="flex items-center justify-between gap-4">

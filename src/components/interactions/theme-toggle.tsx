@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { FiMoon, FiSun } from "react-icons/fi";
 
 import type { ThemeName } from "@/styles/palette";
@@ -12,12 +12,20 @@ export function ThemeController() {
   const theme = useSite((s) => s.theme);
   const setTheme = useSite((s) => s.setTheme);
 
+  const first = useRef(true);
+
   useEffect(() => {
     const initial = document.documentElement.dataset.theme as ThemeName | undefined;
     if (initial === "light" || initial === "dark") setTheme(initial);
   }, [setTheme]);
 
   useEffect(() => {
+    // The pre-paint script already set the stored theme; don't overwrite it
+    // with the store's default before the effect above has synced it.
+    if (first.current) {
+      first.current = false;
+      return;
+    }
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 

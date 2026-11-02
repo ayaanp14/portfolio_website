@@ -15,20 +15,24 @@ import { cn } from "@/lib/cn";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-type Tone = "light" | "dark";
+/** Which side of the story a section shows: FRONT, BACK, or neutral (follows the page theme). */
+type Tone = "front" | "back" | "theme";
 
-/** Reads data-tone-left/right of whatever section sits under a given y. */
+/**
+ * Reads data-tone-left/right ("light" = FRONT side, "dark" = BACK side,
+ * "theme" = neutral) of whatever section sits under a given y. The actual
+ * colours come from the theme, via the .tone-front / .tone-back palettes.
+ */
 function toneAt(y: number, side: "left" | "right"): Tone {
   const sections = document.querySelectorAll<HTMLElement>("[data-tone-left]");
   for (const s of sections) {
     const r = s.getBoundingClientRect();
     if (r.top <= y && r.bottom > y) {
       const t = s.dataset[side === "left" ? "toneLeft" : "toneRight"];
-      if (t === "theme") return (document.documentElement.dataset.theme as Tone) ?? "dark";
-      return t === "dark" ? "dark" : "light";
+      return t === "dark" ? "back" : t === "light" ? "front" : "theme";
     }
   }
-  return "light";
+  return "theme";
 }
 
 export function scrollToHash(hash: string) {
@@ -77,8 +81,8 @@ export function Navbar() {
       raf = 0;
       const set = (el: HTMLElement | null, tone: Tone) => {
         if (!el) return;
-        el.classList.toggle("tone-dark", tone === "dark");
-        el.classList.toggle("tone-light", tone === "light");
+        el.classList.toggle("tone-front", tone === "front");
+        el.classList.toggle("tone-back", tone === "back");
       };
       const tl = toneAt(36, "left");
       const tr = toneAt(36, "right");
@@ -135,8 +139,8 @@ export function Navbar() {
 
       {/* Content fades out beneath the header, matching whatever side it's over */}
       <div className="pointer-events-none fixed inset-x-0 top-0 z-[59] flex h-24" aria-hidden="true">
-        <div ref={fadeL} className="tone-light h-full w-1/2 bg-gradient-to-b from-bg via-bg/80 to-transparent" />
-        <div ref={fadeR} className="tone-dark h-full w-1/2 bg-gradient-to-b from-bg via-bg/80 to-transparent" />
+        <div ref={fadeL} className="tone-front h-full w-1/2 bg-gradient-to-b from-bg via-bg/80 to-transparent" />
+        <div ref={fadeR} className="tone-back h-full w-1/2 bg-gradient-to-b from-bg via-bg/80 to-transparent" />
       </div>
 
       <motion.header
@@ -145,7 +149,7 @@ export function Navbar() {
         transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
         className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex h-20 items-center justify-between px-[4vw]"
       >
-        <div ref={leftRef} className="tone-light pointer-events-auto">
+        <div ref={leftRef} className="tone-front pointer-events-auto">
           <a href="#index" className="group flex items-center gap-3" aria-label="Ayaan Pathan — back to the start">
             <BrandMark className="size-8 transition-transform duration-500 group-hover:rotate-90" />
             <span className="leading-none">
@@ -155,7 +159,7 @@ export function Navbar() {
           </a>
         </div>
 
-        <div ref={rightRef} className="tone-dark pointer-events-auto flex items-center gap-7">
+        <div ref={rightRef} className="tone-back pointer-events-auto flex items-center gap-7">
           <nav aria-label="Primary" className="hidden items-center gap-7 md:flex">
             {navigationItems.map((item) => {
               const active = item.chapter === chapter || (item.label === "Work" && chapter > 0 && chapter < 5);
@@ -197,7 +201,7 @@ export function Navbar() {
         initial={{ opacity: 0 }}
         animate={booted ? { opacity: 1 } : {}}
         transition={{ duration: 0.8, delay: 0.6 }}
-        className="tone-dark fixed right-[1.6vw] top-1/2 z-[55] hidden -translate-y-1/2 md:block"
+        className="tone-back fixed right-[1.6vw] top-1/2 z-[55] hidden -translate-y-1/2 md:block"
       >
         <ol className="flex flex-col items-end gap-3.5" aria-label="Chapters">
           {chapters.map((c, i) => {
@@ -223,7 +227,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             onClick={() => scrollToHash("#street")}
-            className="tone-dark pill fixed bottom-[3.5vh] right-[4vw] z-[56] border border-line-strong bg-night/60 text-ink backdrop-blur max-md:hidden"
+            className="tone-back pill fixed bottom-[3.5vh] right-[4vw] z-[56] border border-line-strong bg-bg/60 text-ink backdrop-blur max-md:hidden"
           >
             Skip the story <FiChevronRight aria-hidden="true" />
           </motion.button>

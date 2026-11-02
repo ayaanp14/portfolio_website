@@ -152,7 +152,7 @@ export const skillsData: SkillNode[] = [
     name: "MySQL",
     category: "Database",
     icon: SiMysql,
-    description: "Relational store behind Qrify's metadata tracking.",
+    description: "Relational store behind VertoWork's 55-model marketplace schema.",
     level: 0.8,
     related: ["rest-api", "prisma"],
   },
